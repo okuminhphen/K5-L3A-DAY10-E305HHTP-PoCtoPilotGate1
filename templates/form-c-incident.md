@@ -47,19 +47,21 @@ Chạy **trước khi sửa bất cứ thứ gì**:
 python3 -m lab10.grade --incident Sx
 ```
 
-- Mã lần chạy grade: `__________` · base: `__________` · prepared: `__________`
-- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared): …
-- Khối kinh doanh và vận hành còn dòng nào vượt trần: …
+- Mã lần chạy grade: `R-S3-grade-20261118-172501-6a25cc` · base: `R-S3-before-20261118-172501-6a25cc` · prepared: `R-S3-prepared-20261118-172501-6a25cc`
+- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared): Trên gói S3 nhìn thấy (12 ticket): `pass_rate` và `pass_k` từ 0,25 lên 0,8333; tiền hoàn sai từ 900.000đ về 0; hoàn thiếu từ 667.000đ về 0; lỗi ghi oan cho hãng từ 35 xuống 10; hãng VNX về pass 1,0 (hoàn sai 900.000đ về 0); hãng MKD từ pass 0,2857 lên 0,7143 (lỗi oan 25 xuống 10); kho CT từ 0 lên 0,75 và DN từ 0 lên 0,5. Cổng đỡ được là ghim chính sách hiệu lực theo ngày (`pre_guard`) và chặn ghi lỗi hãng khi `delay_cause` không thuộc `fault_causes`. Cột `after` giống `prepared` vì bàn chưa sửa gì thêm.
+- Khối kinh doanh và vận hành còn dòng nào vượt trần: Không vượt trần kinh doanh hay vận hành nào (chi phí 4.072đ/ticket so với làm tay 10.000đ, ROI 1,46, hàng chờ 0 ca, tổng hoàn 109.400đ so với ngân sách 2.000.000đ). Nhưng 3 ngưỡng đã ký chưa đạt trên gói S3: `pass_rate` 0,8333 (cần ≥ 0,97), `pass_k` 0,8333 (cần ≥ 0,95), lỗi hãng oan 10 (cần ≤ 0), vì vậy chưa đủ căn cứ chọn Tiếp tục.
 
 **Mở lại pre-mortem (Phiếu B mục B6), viết bằng bút khác màu.** Với thẻ S1, S3, S4, S5 đây là một phần của phần riêng theo thẻ.
 
-- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? …
-- Có nằm trong các lý do bàn đã viết không? Nếu có: cổng vòng 1 đã đỡ được bao nhiêu (đọc cột prepared trong report)? Nếu không: vì sao cả bàn không nghĩ tới? …
+- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? Chủ yếu **pháp lý** (hãng MKD bị ghi lỗi oan và phạt 120.000đ mỗi lỗi, chưa được hỏi) và **kỹ thuật** (chính sách đổi ngày 01/12 mà dữ liệu và chỉ mục chưa theo kịp); còn phần **vận hành và kinh doanh** là hạn mức đã thống nhất 2 lỗi mỗi hãng mỗi ngày không có cổng nào thực thi.
+- Có nằm trong các lý do bàn đã viết không? Nếu có: cổng vòng 1 đã đỡ được bao nhiêu (đọc cột prepared trong report)? Nếu không: vì sao cả bàn không nghĩ tới? **Một phần.** Ví dụ drift chính sách REFUND-v3 sang REFUND-v4 ngày 2026-12-01 đã nằm trong Phiếu B mục B3 (và ảnh hưởng `wrongful_carrier_faults_max` đã được nêu), và cổng vòng 1 đã đỡ được phần lớn (lỗi hãng oan 35 xuống 10, `pass_rate` 0,25 lên 0,8333). Nhưng pre-mortem B6 chỉ có lý do Kinh doanh về trần hoàn ngày và chi phí LLM, không có lý do nào về đổi chính sách hay về hạn mức 2 lỗi mỗi hãng mỗi ngày, nên không có cổng nào cho phần này. Bàn không nghĩ tới vì coi `ops_limits` là số liệu tham khảo của Ops và Finance, không coi là luật phải được code thực thi (guard vòng 1 chỉ kiểm tiền và nguyên nhân trễ, không đếm số lỗi theo hãng).
 - Lý do còn thiếu, thêm bây giờ:
 
 | Lý do thất bại (viết ở thì quá khứ) | Lăng kính | Kiểm được bằng gì (trace / data / config nào) |
 |---|---|---|
-| | | |
+| Hãng Mekong Delta Ship (MKD) đã bị trợ lý tự ghi lỗi từ lần thứ 3 trong ngày, mỗi lỗi bị phạt 120.000đ, dù Ops và Finance đã thống nhất từ lỗi thứ 3 trở đi phải có người duyệt. | Vận hành và pháp lý | `data/world.json` → `ops_limits.max_auto_strikes_per_carrier_per_day` = 2 và `carriers[MKD].penalty_per_strike_vnd` = 120000; trace `S3-42`, `S3-43` (sự kiện `tool` `file_carrier_fault` vẫn chạy, nhãn là không ghi lỗi). |
+| Ngày chính sách đổi (2026-12-01), chỉ mục chính sách còn bật bản cũ nên trợ lý áp ngưỡng và quy tắc lỗi hãng của bản cũ (bão lũ vẫn bị ghi lỗi hãng, khách trễ 2 ngày bị từ chối hoàn phí). | Kỹ thuật | `policies[].index_active` so với `effective_from` / `effective_to`; `incidents/S3/world_patch.json` → `as_of` = 2026-12-02; trace sự kiện `policy`. |
+| Tracking chưa ghi nguyên nhân trễ (`delay_cause` trống) mà trợ lý vẫn tính là lỗi của hãng. | Pháp lý | `incidents/S3/world_patch.json` (O-2320, O-2321 có `delay_cause` null); trace sự kiện `tracking` (`cause_recorded`); `operating_gates.legal.carrier_fault_requires_recorded_cause`. |
 
 ---
 
@@ -220,8 +222,9 @@ Mở lại Phiếu B mục B3. Ghi ở đây những dòng đổi so với vòng
 
 | Trường / bảng | Vòng 1 bàn đã coi là (nguồn sự thật / bản sao / chưa hỏi) | Sau khi đọc thẻ thì thấy | Ảnh hưởng tới tiền hay lỗi hãng thế nào |
 |---|---|---|---|
-| | | | |
-| | | | |
+| `policies[].effective_from` / `effective_to` và cờ `index_active` | `effective_from/to` là nguồn sự thật về phiên bản hiệu lực (B3). Cờ `index_active` được liệt kê nhưng không bàn nghĩ nó khác nguồn sự thật. | `effective_from/to` vẫn đúng và `index_active` là **bản sao chậm**: ở `as_of` = 2026-12-02, REFUND-v3 đã hết hiệu lực (2026-11-30) nhưng `index_active` v3 vẫn `true`, v4 vẫn `false`. Phải chọn bản theo ngày, không theo cờ. | Tiền: ngưỡng ngày trễ (3 hay 2), mức thưởng và hạn mức tự động đổi (200.000đ xuống 100.000đ). Lỗi hãng: v4 bỏ `FORCE_MAJEURE` khỏi `fault_causes` nên kiện bão không được ghi lỗi. Cổng `pre_guard` vòng 1 đã ghim đúng bản. |
+| `parcels[].delay_cause` | Nguồn sự thật nhưng "được phép trống" (B3); bàn chưa hỏi trống thì hệ thống nghiêng về phía ai. | Trống ở O-2320, O-2321. Nếu hệ thống mặc định coi là lỗi hãng thì hãng gánh phạt 120.000đ mà không có căn cứ. Hãng là bên thiệt, không phải khách. | Lỗi hãng oan; pháp lý (bên thứ ba bị ghi lỗi không có nguyên nhân). Cổng vòng 1 chỉ ghi lỗi khi nguyên nhân thuộc `fault_causes`; cấu hình `legal.carrier_fault_requires_recorded_cause` = true. |
+| `ops_limits.max_auto_strikes_per_carrier_per_day` | Có trong B3 như số liệu của Ops và Finance nhưng bàn **chưa hỏi** có cổng nào thực thi nó không. | Không đoạn code nào đọc khoá này (`MKD` đã có 2 lỗi trong ngày từ S3-40, S3-41 nhưng S3-42, S3-43 vẫn bị ghi lỗi tự động). | Lỗi hãng oan còn 10 (5 seed x 2 ticket) trên gói S3; hãng MKD chịu thêm 240.000đ phạt mỗi seed (2 lỗi x 120.000đ). Bàn sẽ phải thêm vào `guards.py` nhánh đếm lỗi theo hãng trong ngày và chuyển người duyệt từ lỗi thứ 3. |
 
 ---
 
@@ -249,9 +252,9 @@ Bắt buộc: ít nhất ba dòng, trong đó **một dòng là nhánh bàn chư
 
 ### Câu 3.2 · Một specification mà nếu bị vi phạm thì gây ra tác hại trên thẻ
 
-Kiểm được bằng code hoặc bằng một con số trong report: …
+Kiểm được bằng code hoặc bằng một con số trong report: Trợ lý chỉ được tự ghi một lỗi cho hãng vận chuyển khi cả hai điều kiện đúng: (a) kiện hàng có nguyên nhân trễ đã ghi trong tracking và nguyên nhân đó thuộc `fault_causes` của chính sách có hiệu lực tại ngày xử lý (không phải bản `index_active`), và (b) hãng đó chưa có đủ 2 lỗi tự động trong ngày (`ops_limits.max_auto_strikes_per_carrier_per_day`); từ lỗi thứ 3 trở đi phải chuyển người duyệt. Nếu vi phạm, hãng bị ghi lỗi oan và bị phạt `penalty_per_strike_vnd` (MKD: 120.000đ mỗi lỗi) mà không ai xác nhận.
 
-Kiểm bằng gì (hàm trong `guards.py`, dòng report nào): …
+Kiểm bằng gì (hàm trong `guards.py`, dòng report nào): Hàm `write_gate`, nhánh `tool == "file_carrier_fault"`: điều kiện (a) dùng `H.effective_policy` và `H.carrier_at_fault` (đã có ở vòng 1); điều kiện (b) cần đếm các dòng `ctx.tools.fault_rows(...)` của hãng trong ngày và trả `Verdict.escalate` khi đã đủ 2 (nhánh này chưa có, Kỹ sư cổng cần viết). Trong report: dòng `pháp lý: lỗi ghi oan cho hãng (bên thứ ba)` (hiện 10, cần 0), chỉ số `wrongful_carrier_faults` trên bộ visible (hiện 10, ngưỡng đã ký ≤ 0) và ticket `S3-42`, `S3-43` ở mọi seed.
 
 ### Câu 3.3 · Một giả định về môi trường mà người thiết kế đã ngầm tin, nhưng nhiều khả năng sai ngoài thực tế
 
