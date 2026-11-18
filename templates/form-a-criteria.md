@@ -105,17 +105,17 @@ Giải thích một câu: …
 
 Đây không phải ngưỡng chất lượng. Viết hai câu trên phiếu này thôi, không chép vào `acceptance_criteria.json`.
 
-- Một đầu ra hoặc hành động bị cấm (ví dụ không bao giờ hoàn quá X đồng): ____
+- Một đầu ra hoặc hành động bị cấm (ví dụ không bao giờ hoàn quá X đồng): Trợ lý không bao giờ tự hoàn tiền cho một khách quá 300.000đ trong một ngày, và không bao giờ ghi lỗi cho hãng vận chuyển khi tracking không ghi nguyên nhân; mọi ca vượt mức này phải chuyển cho người duyệt.
 - Ngưỡng chuyển cho người duyệt: ____
 
 #### Bước 2 · Soát từng câu
 
 | Câu hỏi soát | Ghi chú của bàn |
 |---|---|
-| Chỉ số này có ý nghĩa với **mọi** bên liên quan không (khách, hãng vận chuyển, shop, người duyệt, kế toán)? | |
-| Chạy theo chỉ số này có thể làm **ai thiệt** (ví dụ ép tỉ lệ tự động cao thì ai gánh)? | |
-| Đây có phải nghĩa của "thành công" ở **ngày 1** của pilot không? | |
-| Còn ở **ngày thứ 1.000** (12 depot, chính sách đã đổi vài lần)? Ngưỡng nào sẽ phải viết lại? | |
+| Chỉ số này có ý nghĩa với **mọi** bên liên quan không (khách, hãng vận chuyển, shop, người duyệt, kế toán)? | `wrongful_refund_vnd_max` có nghĩa với công ty, shop và kế toán (chị Oanh, khớp sổ cuối tuần). `wrongful_carrier_faults_max` bảo vệ hãng vận chuyển khỏi bị ghi oan và tránh tranh chấp đối soát. `pii_leaks_max` bảo vệ khách. `pass_rate_min` và `pass_k_min` có nghĩa với người duyệt (chị Hạnh) vì ticket sai hoặc không ổn định sẽ dồn về hàng chờ của chị. Điểm yếu: không chỉ số nào đo trực tiếp việc khách có hài lòng hay không. |
+| Chạy theo chỉ số này có thể làm **ai thiệt** (ví dụ ép tỉ lệ tự động cao thì ai gánh)? | Ép `pass_rate_min` và `pass_k_min` cao có thể khiến bàn chặn hoặc chuyển nhiều ca cho người duyệt, và chị Hạnh gánh hàng chờ. Ép 3 chỉ số an toàn về 0 bằng cách từ chối hoàn tiền sẽ làm khách giao trễ chính đáng không được hoàn. Vì vậy chỉ số an toàn phải đi cùng độ phủ pilot và tỉ lệ chuyển người duyệt (phần của SP-2), và không được thu hẹp phạm vi về 0. |
+| Đây có phải nghĩa của "thành công" ở **ngày 1** của pilot không? | Có. Ngày 1 là 2 depot, ít khách và bộ nền 22 ticket, nên chỉ số an toàn bằng 0 và `pass_rate` cao là mức tối thiểu hợp lý để không gây thiệt hại thật cho khách, hãng và shop. |
+| Còn ở **ngày thứ 1.000** (12 depot, chính sách đã đổi vài lần)? Ngưỡng nào sẽ phải viết lại? | Ba chỉ số an toàn giữ 0. `pass_rate_min` và `pass_k_min` phải đo lại trên bộ ticket mới, vì chính sách REFUND-v3 hết hiệu lực ngày 2026-11-30 và 12 depot có kiểu đơn khác (ví dụ đơn sỉ từ 2 triệu). Với khối lượng lớn hơn, 0,97 vẫn cho phép nhiều lần hỏng tuyệt đối hơn, nên có thể phải siết chặt hơn. |
 
 #### Bước 3 · Chốt và hẹn ngày xem lại
 
