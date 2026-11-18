@@ -8,10 +8,10 @@
   ],
   "incident": "S3",
   "decision_v1": "Thu hẹp",
-  "decision_v2": "Tiếp tục",
+  "decision_v2": "Thu hẹp",
   "three_lines": {
-    "environment_assumption": "Giả định rằng dữ liệu nguyên nhân giao trễ trên tracking log của các đơn vị đối tác luôn được nhân viên bưu cục cập nhật trung thực và kịp thời trước khi khách hàng gửi khiếu nại.",
-    "reduce_or_prevent": "Các cổng trong guards.py thực sự NGĂN hẳn tác hại, vì chúng nằm ở tầng hạ tầng can thiệp trực tiếp trước các lệnh ghi (write_gate), độc lập với model LLM; nếu vi phạm điều kiện an toàn thì thao tác ghi lập tức bị chặn đứng.",
-    "measure_in_pilot": "Cần đo lại độ trễ ghi nhận nguyên nhân trễ (delay_cause) từ hệ thống API của các hãng vận chuyển thứ ba khi xảy ra thiên tai thực tế và tỉ lệ tài xế khai báo sai nguyên nhân để trốn phạt."
+    "environment_assumption": "Tracking luôn có `delay_cause` đúng và kịp thời trước khi khách khiếu nại; ngay trong dữ liệu đã có 5/26 kiện trống nguyên nhân (và O-2320, O-2321 trong gói S3), và tracking còn trả mặc định `CARRIER` khi trống.",
+    "reduce_or_prevent": "Với các nhánh đã biết (kiện thiếu nguyên nhân, chính sách sai phiên bản, từ lỗi hãng thứ 3 trong ngày) cổng `write_gate` NGĂN được vì lệnh ghi bị chặn bằng nguồn sự thật, không phụ thuộc model (lỗi hãng oan 35 xuống 0). Nhưng chỉ GIẢM khả năng với phần còn lại: lọc PII che theo mẫu nên chữ viết cách khác vẫn có thể lọt, lệnh bị `deny` chưa tự chuyển cho người xác nhận, và nếu chính tracking ghi sai nguyên nhân thì cổng vẫn cho qua.",
+    "measure_in_pilot": "Tỉ lệ kiện trống `delay_cause` (hiện 5/26), `escalation_rate` thật của từng kho sau 2026-12-01 khi REFUND-v4 giảm hạn mức tự động xuống 100.000đ (DN chỉ 5 ticket mỗi ngày nên 0,1765 chưa đáng tin), và số lỗi hãng mỗi ngày của MKD so với trần 2 lỗi."
   }
 }

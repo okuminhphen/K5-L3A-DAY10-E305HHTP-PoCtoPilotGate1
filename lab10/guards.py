@@ -29,8 +29,22 @@ lab10.helpers: db_delay_days, ticket_parcel, effective_policy, entitlement_vnd, 
 
 Mặc định dưới đây cho qua tất cả (= mốc base).
 """
+import re
+
 from . import helpers as H  # noqa: F401
 from .tools import Verdict
+
+_MASK = "[đã ẩn]"
+_PHONE_LIKE = re.compile(r"(?:\+?\d[\s.\-]?){8,}\d")
+
+
+def _scrub_text(text, recipient):
+    """Bỏ tên, đường, số điện thoại của người nhận (và mọi dãy số giống SĐT) khỏi chữ tự do gửi cho hãng."""
+    out = _PHONE_LIKE.sub(_MASK, text)
+    for value in (recipient.get("name"), recipient.get("street")):
+        if value:
+            out = re.sub(re.escape(value), _MASK, out, flags=re.IGNORECASE)
+    return out
 
 
 def pre_guard(ctx):
@@ -46,7 +60,9 @@ def write_gate(ctx, action):
     # action = {"tool": "issue_refund", "ticket_id":..., "order_id":..., "amount_vnd":..., "payer":..., ...}
     tool = action.get("tool")
 
-    order = ctx.tools.lookup_order(action.get("order_id"))
+    # notify_carrier không có order_id ở cấp ngoài: lấy từ payload để cổng PII không bị bỏ qua
+    order_id = action.get("order_id") or (action.get("payload") or {}).get("order_id")
+    order = ctx.tools.lookup_order(order_id)
     if not order:
         return Verdict.allow()
 
@@ -93,8 +109,12 @@ def write_gate(ctx, action):
     # Cổng 3: Chặn rò rỉ dữ liệu cá nhân PII khi gửi thông báo ra hãng vận chuyển
     if tool == "notify_carrier":
         payload = action.get("payload") or {}
-        if "recipient_contact" in payload:
-            return Verdict.modify("Xoá thông tin liên hệ cá nhân PII trước khi gửi bên thứ ba",
-                                  payload={k: v for k, v in payload.items() if k != "recipient_contact"})
+        recipient = order.get("recipient") or {}
+        blocked = {"recipient_contact"} | set((ctx.gates or {}).get("legal", {}).get("pii_fields_blocked_to_third_party") or [])
+        cleaned = {k: (_scrub_text(v, recipient) if isinstance(v, str) else v)
+                   for k, v in payload.items() if k not in blocked}
+        if cleaned != payload:
+            return Verdict.modify("Xoá thông tin cá nhân của người nhận (khoá liên hệ và chữ tự do) trước khi gửi bên thứ ba",
+                                  payload=cleaned)
 
     return Verdict.allow()

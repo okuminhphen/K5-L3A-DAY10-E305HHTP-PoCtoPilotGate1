@@ -1,6 +1,6 @@
 # Phiếu B · Đo, rủi ro, cổng vòng 1 và quyết định v1 · Khối 2A + 2B + chốt (phút 65–115)
 
-**Bàn:** ______
+**Bàn:** E305HHTP
 
 Tiêu chí đã ký ở Phiếu A. Từ phút 65 bàn mới được chạy trợ lý. Khối 2A (65–85) chưa sửa code hay config. Khối 2B (85–105) sửa
 `lab10/guards.py` và `config/operating_gates.json`. Phút 105–115 chốt cổng vòng 1 rồi viết quyết định v1. Sau phút 115 không sửa phiếu này
@@ -212,7 +212,7 @@ Trạng thái: **Xong** (có bằng chứng) · **Chưa** · **Không áp dụng
 | 4 | Quyền hạn | `config/switches.json` + guard trước lệnh ghi; thẻ S2, S8 có thêm mục mức kiểm soát (Phiếu C mục C3) | Đã cấu hình công tắc và soát cổng trước lệnh ghi | Xong | B7.1, `config/switches.json` và `lab10/guards_round1.py`. `R-base-prepared-20261118-165600-17ba81` có 0đ hoàn sai và 0 lỗi hãng oan trên bộ nền. | Lê Minh Phụng |
 | 5 | Hiệu năng, hạ tầng | Đội tự ước tính; HAZOP guideword INCAPABLE: LLM không trả lời thì sao; số người duyệt và số ca mỗi giờ | LLM không trả lời, công suất duyệt và thời gian chờ | Xong | B4 và B7.6. Bản chốt dùng 1 người, 6 ca/giờ, SLA 60 phút. `R-base-before-20261118-161851-bde05c` ghi 0 phút chờ và 0 ca ùn. | Lê Minh Phụng |
 | 6 | Chi phí | Khối "kinh doanh và vận hành" của report: chi phí mỗi ticket so với làm tay, ROI, tiền LLM ticket đắt nhất; `config/operating_gates.json` mục `business` | So chi phí và ROI với mốc ký, kiểm ngân sách LLM và trần hoàn | Xong | B7.4 và B8. Trần hoàn 1.000.000đ/ngày, ngân sách LLM 1.500đ/ticket, ROI tối thiểu 0,60 trong bản chốt. | Phạm Thanh Tùng |
-| 7 | Vận hành | Runbook (Phiếu B mục B7.5–B7.6) + `config/operating_gates.json` mục `operations` (PIC, người duyệt, số người trực, điều kiện dừng, kênh báo tin) + metric trong `monitors.py` | Ghi người chịu trách nhiệm, điều kiện dừng, kênh báo và giờ cao điểm | Xong | B7.5–B7.6 và `config/operating_gates.round1.json` mục `operations`. Kênh `#ops-alerts`. Monitor riêng của thẻ thực hiện ở CP4. | Lê Minh Phụng |
+| 7 | Vận hành | Runbook (Phiếu B mục B7.5–B7.6) + `config/operating_gates.json` mục `operations` (PIC, người duyệt, số người trực, điều kiện dừng, kênh báo tin) + metric trong `monitors.py` | Ghi người chịu trách nhiệm, điều kiện dừng, kênh báo và giờ cao điểm | Xong | B7.5–B7.6 và `config/operating_gates.round1.json` mục `operations`. Kênh `#ops-alerts`. Chỉ số theo dõi mới của bàn: `carrier_fault_rate`, `force_majeure_rate`, `effective_policy_v4_rate` (Phiếu C mục C8). | Lê Minh Phụng |
 | 8 | Con người, pháp lý | Bên thứ ba (hãng, tài xế, shop, người nhận quà, người đứng tên duyệt); `config/operating_gates.json` mục `legal`; thẻ S6, S7, S8 có mục riêng ở Phiếu C mục C3 | Đối chiếu cổng ghi lỗi hãng, lọc PII và đầu mối khiếu nại | Xong | Mục `legal` trong bản chốt và Runbook 1. `carrier_fault_requires_recorded_cause` đã bật. `R-base-prepared-20261118-165600-17ba81` có 0 ca lộ PII trên bộ nền. | Lê Minh Phụng |
 | 9 | Quyết định | Câu tiêu chí (Phiếu A mục A4) + hash Bản tiêu chí đã ký + quyết định Gate 1 (Phiếu B mục B8, Phiếu C mục C12) | Đối chiếu tiêu chí đã ký và quyết định Gate 1 v1 | Xong | Phiếu A mục A5, `config/acceptance_criteria.lock` (hash `7b9fcf2d`) và B8 (quyết định **Thu hẹp**). | Hoàng Hải Nam |
 
@@ -249,7 +249,7 @@ Bốn lăng kính (bắt buộc đủ cả bốn; dự án AI hay chết ở ba 
 
 | Lý do thất bại (viết ở thì quá khứ) | Lăng kính | Kiểm được hôm nay? (trace / data / config nào) | Thành cổng phòng ngừa nào (code hay config) / hay vào risk register |
 |---|---|---|---|
-| | Kỹ thuật | | |
+| Chỉ mục chính sách còn bật bản cũ sau ngày chính sách đổi, nên trợ lý tính sai tiền hoàn và ghi lỗi hãng theo quy tắc đã hết hiệu lực. | Kỹ thuật | Có: `policies[].index_active` so với `effective_from/effective_to` trong `data/world.json`; sự kiện `policy` (`pinned`) trong trace. | Cổng code: `pre_guard` ghim chính sách theo `ctx.as_of` (`H.effective_policy`); `write_gate` chặn ghi lỗi hãng khi `H.carrier_at_fault` sai. |
 | Tổng tiền hoàn tự động trong ngày đã vượt ngân sách 2.000.000đ của Finance mà không có trần nào chặn, và vài ticket tốn tiền LLM hơn làm tay, nên Finance yêu cầu tắt trợ lý. | Kinh doanh | Có: dòng "tổng hoàn tự động một ngày" trong report base (155.000đ, ngân sách 2.000.000đ, trần bàn đặt: chưa đặt); `business.daily_refund_cap_vnd` và `business.cost_budget_per_ticket_vnd` đang là `null`; phân khúc kho `?` có chi phí 10.359đ/ticket, cao hơn làm tay. | Cổng config: `business.daily_refund_cap_vnd` và `business.cost_budget_per_ticket_vnd` (xem B7.4). Phạm vi pilot theo kho để đổi sau, ghi vào risk register nếu lượng ticket tăng. |
 | Ca duyệt dồn vào giờ cao điểm, một người trực không xử lý kịp và khách phải chờ quá 60 phút. | Con người và vận hành | `operations` trong bản chốt, số ca ùn và thời gian chờ trong report. | Runbook B7.5–B7.6. Báo Tùng, bổ sung người duyệt và thu hẹp khi vẫn quá SLA. |
 | Hãng bị ghi lỗi khi tracking chưa xác nhận nguyên nhân. Khiếu nại đến sau đối soát và LogiX phải rà lại các khoản phạt. | Pháp lý | `delay_cause` trong tracking, sự kiện `tracking` và lệnh `file_carrier_fault`. | `legal.carrier_fault_requires_recorded_cause` và đối chiếu chính sách ở cổng ghi. |
@@ -287,7 +287,7 @@ Bàn đang chỉnh cổng tới khi 22 ticket bộ nền xanh hết. Nêu 2 bư�
 
 ### B7.3 · Câu 2.8 · Một behavioral test
 
-- Tính chất (một câu): Mọi yêu cầu đòi hoàn tiền hoặc đòi phạt lỗi hãng khi đơn hàng thực tế theo Tracking DB trễ dưới 5 ngày (chưa đủ điều kiện chính sách) bắt buộc phải bị từ chối, không được ghi sổ cái và không được phạt hãng.
+- Tính chất (một câu): Mọi yêu cầu đòi hoàn tiền hoặc đòi phạt lỗi hãng khi đơn hàng thực tế theo Tracking DB trễ dưới 3 ngày (chưa đủ điều kiện chính sách) bắt buộc phải bị từ chối, không được ghi sổ cái và không được phạt hãng.
 
 ```bash
 python3 -m lab10.trace --suite base --stage after --adhoc "..." --order O-10xx --customer C-xx
@@ -344,7 +344,7 @@ Mỗi dòng một tín hiệu. Cột "Lấy ở đâu" phải là một dòng tr
 | Tổng tiền hoàn tự động trong ngày so với trần | Dòng `tổng hoàn tự động một ngày` trong `lab10.eval` / `lab10.grade` (`refund.auto_refund_day_max_vnd`) | `≤ 800.000đ` (`≤ 80%` trần bàn đặt `1.000.000đ`) | `800.001đ–1.000.000đ` → báo kế toán `NV-OANH` và `NV-HANH` theo dõi sát | `> 1.000.000đ` (vượt `daily_refund_cap_vnd = 1.000.000đ`) hoặc `> 2.000.000đ` (ngân sách Finance) → chuyển toàn bộ khoản hoàn mới sang `NV-HANH` duyệt | Trần Thị Hạnh (`NV-HANH`) |
 | Tiền hoàn sai | Dòng `wrongful_refund_vnd` trong `lab10.eval` / `lab10.grade` | `0đ` | Không có ngưỡng vàng (tiêu chí ký `wrongful_refund_vnd_max = 0`) | `> 0đ` → tắt `issue_refund` trong `config/switches.json` (chuyển hết cho người xử lý), thông báo `NV-OANH` | Lê Thanh Tùng (`NV-TUNG`) |
 | Lỗi ghi oan cho hãng / lộ dữ liệu cá nhân (pháp lý) | Dòng `wrongful_carrier_faults` và `pii_leaks` trong `lab10.eval` / `lab10.grade` | `0 lỗi hãng oan · 0 ca lộ PII` | Không có ngưỡng vàng (tiêu chí ký đều `= 0`) | `wrongful_carrier_faults > 0` → tắt `file_carrier_fault`; `pii_leaks > 0` → tắt ngay `notify_carrier` trong `config/switches.json` | Lê Thanh Tùng (`NV-TUNG`) |
-| Tỉ lệ chuyển người duyệt (tín hiệu riêng của bàn) | Dòng `escalation_rate` / `monitors['escalation_rate']` trong `lab10/monitors.py` | `≤ 0,15` (15%) | `0,16–0,20` → kiểm tra nhóm ticket/kho khiến chuyển người tăng bất thường | `> 0,20` (vượt `escalation_rate_max = 0,2` đã ký) → tăng người trực duyệt hoặc thu hẹp `business.pilot_scope` | Lê Thanh Tùng (`NV-TUNG`) |
+| Tỉ lệ chuyển người duyệt (tín hiệu riêng của bàn) | Dòng `escalation_rate` / `monitors['escalation_rate']` trong `lab10/monitors.py` | `≤ 0,18` | `0,18–0,20` → kiểm tra nhóm ticket/kho khiến chuyển người tăng bất thường | `> 0,20` (vượt `escalation_rate_max = 0,2` đã ký) → tăng người trực duyệt hoặc thu hẹp `business.pilot_scope` | Lê Thanh Tùng (`NV-TUNG`) |
 
 #### Runbook 3 · Điều kiện dừng và cách dừng
 

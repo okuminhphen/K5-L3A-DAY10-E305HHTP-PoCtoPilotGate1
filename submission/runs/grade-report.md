@@ -2,10 +2,10 @@
 
 *Đây là kết quả TỰ KIỂM TRA của bàn, không phải điểm. Bài được một team chấm tự động chấm lại sau buổi học.*
 
-- Mã lần chạy: `R-S3-grade-20261118-175252-ee99bf` · bàn: `K5-L3A-DAY10-E305HHTP-PoCtoPilotGate1` · grader `lab10-1.0` · 0.64s
-- Ba mốc: base `R-S3-before-20261118-175253-ee99bf` · prepared `R-S3-prepared-20261118-175253-ee99bf` · after `R-S3-after-20261118-175253-ee99bf` (report + trace trong runs/)
+- Mã lần chạy: `R-S3-grade-20261118-190514-a65420` · bàn: `K5-L3A-DAY10-E305HHTP-PoCtoPilotGate1` · grader `lab10-1.0` · 0.355s
+- Ba mốc: base `R-S3-before-20261118-190515-a65420` · prepared `R-S3-prepared-20261118-190515-a65420` · after `R-S3-after-20261118-190515-a65420` (report + trace trong runs/)
 - Mốc prepared (cổng vòng 1): đã chốt `c0c09852`, còn nguyên
-- Hash code đội (guards + monitors + switches + cổng vận hành): `ee99bfcd44ec`
+- Hash code đội (guards + monitors + switches + cổng vận hành): `a65420312b4a`
 - Hash Bản tiêu chí chấp nhận: `7b9fcf2db29a` · đã ký: `7b9fcf2db29a` · KHÔNG ĐỔI
 - Thẻ đang kiểm: `S3` · dòng "Thẻ đã bốc" bàn ghi trong phiếu: S3 · khớp
 
@@ -16,25 +16,25 @@
 | 3 visible | ✅ | base có vấn đề: True; after sạch: True; ticket còn hỏng: không; trần còn vượt: không |
 | 4 hidden | — | máy này không có bài kiểm tra ẩn (team chấm sẽ chạy sau buổi học) |
 | 5 regression | ✅ | bộ nền pass_rate 0.9909 → 1.0; ca mới hỏng: không |
-| 6 monitor | ✅ | metric mới: ['carrier_fault_rate', 'force_majeure_rate', 'effective_policy_v4_rate']; sáng đèn: [('carrier_fault_rate', 'before', 0.509091, 0.833333), ('carrier_fault_rate', 'after', 0.5, 0.333333), ('force_majeure_rate', 'before', 0.045455, 0.166667), ('force_majeure_rate', 'after', 0.045455, 0.166667)] |
+| 6 monitor | ✅ | metric mới: ['carrier_fault_rate', 'force_majeure_rate', 'effective_policy_v4_rate']; sáng đèn: [('carrier_fault_rate', 'before', 0.509091, 0.833333), ('carrier_fault_rate', 'after', 0.470588, 0.3), ('force_majeure_rate', 'before', 0.045455, 0.166667), ('force_majeure_rate', 'after', 0.058824, 0.2)] |
 
 **Kinh doanh · vận hành · pháp lý trên gói sự cố bàn nhìn thấy** (tiền tính cho một ngày giả lập)
 
 | Chỉ số | base | prepared | after |
 |---|---|---|---|
-| tỉ lệ chuyển người duyệt | 0.0 | 0.0833 | 0.0833 |
+| tỉ lệ chuyển người duyệt | 0.0 | 0.0833 | 0.1 |
 | thời gian chờ trung bình (phút) | 0.0 | 0.0 | 0.0 |
 | thời gian chờ lâu nhất (phút) | 0.0 | 0.0 | 0.0 |
 | số ca bị ùn | 0 | 0 | 0 |
 | số người trực · ca duyệt được mỗi giờ | 1 · 6 | 1 · 6 | 1 · 6 |
 | nhân viên kiểm lại quyết định tự động (%) | 0 | 0 | 0 |
-| chi phí mỗi ticket (đ) · làm tay | 3147 · 10000 | 4072 · 10000 | 4072 · 10000 |
+| chi phí mỗi ticket (đ) · làm tay | 3147 · 10000 | 4072 · 10000 | 4733 · 10000 |
 | tiền LLM ticket đắt nhất (đ) · trần | 667 · 1500 | 771 · 1500 | 771 · 1500 |
-| tiết kiệm ròng mỗi ngày (đ) | -97759 | 71141 | 71141 |
-| ROI | -2.59 | 1.46 | 1.46 |
-| tổng hoàn tự động một ngày (đ) · ngân sách | 180000 · 2000000 | 109400 · 2000000 | 109400 · 2000000 |
+| tiết kiệm ròng mỗi ngày (đ) | -97759 | 71141 | 52669 |
+| ROI | -2.59 | 1.46 | 1.11 |
+| tổng hoàn tự động một ngày (đ) · ngân sách | 180000 · 2000000 | 109400 · 2000000 | 85400 · 2000000 |
 | tiền hoàn sai ngày tệ nhất (đ) · ngân sách | 180000 · 2000000 | 0 · 2000000 | 0 · 2000000 |
-| độ phủ pilot (phần ticket trợ lý xử lý) | 1.0 | 1.0 | 1.0 |
+| độ phủ pilot (phần ticket trợ lý xử lý) | 1.0 | 1.0 | 0.8333 |
 | số kho đắt hơn làm tay | 0 | 0 | 0 |
 | pháp lý: lần lộ dữ liệu cá nhân cho bên thứ ba | 0 | 0 | 0 |
 | pháp lý: lỗi ghi oan cho hãng (bên thứ ba) | 35 | 10 | 0 |
@@ -44,7 +44,7 @@
 | Phân khúc | base | prepared | after |
 |---|---|---|---|
 | kho CT | pass 0.0; hoàn sai 0; oan 20; PII 0; chi phí 662đ | pass 0.75; hoàn sai 0; oan 5; PII 0; chi phí 762đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 762đ |
-| kho DN | pass 0.0; hoàn sai 0; oan 5; PII 0; chi phí 664đ | pass 0.5; hoàn sai 0; oan 5; PII 0; chi phí 764đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 764đ |
+| kho DN | pass 0.0; hoàn sai 0; oan 5; PII 0; chi phí 664đ | pass 0.5; hoàn sai 0; oan 5; PII 0; chi phí 764đ | — |
 | kho HCM | pass 0.5; hoàn sai 0; oan 5; PII 0; chi phí 661đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 761đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 761đ |
 | kho HN | pass 0.5; hoàn sai 900000; oan 5; PII 0; chi phí 615đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 3190đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 3190đ |
 | hãng DNB | pass 0.0; hoàn sai 0; oan 5; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 |
@@ -56,19 +56,19 @@
 
 | Chỉ số | base | prepared | after |
 |---|---|---|---|
-| tỉ lệ chuyển người duyệt | 0.2273 | 0.2273 | 0.2273 |
+| tỉ lệ chuyển người duyệt | 0.2273 | 0.2273 | 0.1765 |
 | thời gian chờ trung bình (phút) | 0.0 | 0.0 | 0.0 |
 | thời gian chờ lâu nhất (phút) | 0.0 | 0.0 | 0.0 |
 | số ca bị ùn | 0 | 0 | 0 |
 | số người trực · ca duyệt được mỗi giờ | 1 · 6 | 1 · 6 | 1 · 6 |
 | nhân viên kiểm lại quyết định tự động (%) | 0 | 0 | 0 |
-| chi phí mỗi ticket (đ) · làm tay | 4203 · 10000 | 4274 · 10000 | 4274 · 10000 |
+| chi phí mỗi ticket (đ) · làm tay | 4203 · 10000 | 4274 · 10000 | 4165 · 10000 |
 | tiền LLM ticket đắt nhất (đ) · trần | 670 · 1500 | 770 · 1500 | 770 · 1500 |
-| tiết kiệm ròng mỗi ngày (đ) | 123542 | 125962 | 125962 |
-| ROI | 1.34 | 1.34 | 1.34 |
+| tiết kiệm ròng mỗi ngày (đ) | 123542 | 125962 | 99194 |
+| ROI | 1.34 | 1.34 | 1.4 |
 | tổng hoàn tự động một ngày (đ) · ngân sách | 155000 · 2000000 | 155000 · 2000000 | 155000 · 2000000 |
 | tiền hoàn sai ngày tệ nhất (đ) · ngân sách | 20000 · 2000000 | 0 · 2000000 | 0 · 2000000 |
-| độ phủ pilot (phần ticket trợ lý xử lý) | 1.0 | 1.0 | 1.0 |
+| độ phủ pilot (phần ticket trợ lý xử lý) | 1.0 | 1.0 | 0.7727 |
 | số kho đắt hơn làm tay | 0 | 0 | 0 |
 | pháp lý: lần lộ dữ liệu cá nhân cho bên thứ ba | 0 | 0 | 0 |
 | pháp lý: lỗi ghi oan cho hãng (bên thứ ba) | 1 | 0 | 0 |
@@ -79,11 +79,11 @@
 |---|---|---|---|
 | kho ? | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 10359đ > làm tay | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 10359đ > làm tay | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 10359đ > làm tay |
 | kho CT | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 590đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 665đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 665đ |
-| kho DN | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 4586đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 4646đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 4646đ |
+| kho DN | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 4586đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 4646đ | — |
 | kho HCM | pass 0.96; hoàn sai 20000; oan 1; PII 0; chi phí 2571đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 2647đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 2647đ |
 | kho HN | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 1993đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 2079đ | pass 1.0; hoàn sai 0; oan 0; PII 0; chi phí 2079đ |
 | hãng ? | pass 1.0; hoàn sai 0; oan 0; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 |
-| hãng DNB | pass 1.0; hoàn sai 0; oan 0; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 |
+| hãng DNB | pass 1.0; hoàn sai 0; oan 0; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 | — |
 | hãng GHSH | pass 1.0; hoàn sai 0; oan 0; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 |
 | hãng LGX | pass 1.0; hoàn sai 0; oan 0; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 |
 | hãng MKD | pass 1.0; hoàn sai 0; oan 0; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 | pass 1.0; hoàn sai 0; oan 0; PII 0 |
@@ -104,7 +104,7 @@
 | base | wrongful_carrier_faults | 1 | 0 | 0 | -1 |
 | base | merchant_debit_vnd | 0 | 0 | 0 | +0 |
 | base | pii_leaks | 0 | 0 | 0 | +0 |
-| base | escalation_rate | 0.2273 | 0.2273 | 0.2273 | +0.0 |
+| base | escalation_rate | 0.2273 | 0.2273 | 0.1765 | -0.0508 |
 | visible | pass_rate | 0.25 | 0.8333 | 1.0 | +0.75 |
 | visible | pass_k | 0.25 | 0.8333 | 1.0 | +0.75 |
 | visible | wrongful_refund_vnd | 900000 | 0 | 0 | -900000 |
@@ -112,4 +112,4 @@
 | visible | wrongful_carrier_faults | 35 | 10 | 0 | -35 |
 | visible | merchant_debit_vnd | 0 | 0 | 0 | +0 |
 | visible | pii_leaks | 0 | 0 | 0 | +0 |
-| visible | escalation_rate | 0.0 | 0.0833 | 0.0833 | +0.0833 |
+| visible | escalation_rate | 0.0 | 0.0833 | 0.1 | +0.1 |
