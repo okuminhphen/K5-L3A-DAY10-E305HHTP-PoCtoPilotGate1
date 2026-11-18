@@ -1,28 +1,28 @@
 {
-  "team": "",
+  "team": "K5-L3A-DAY10-E305HHTP-PoCtoPilotGate1",
   "version": "1.0 (nối PRD v1.1 và eval card của Lab 9)",
-  "signed_by": "",
+  "signed_by": "Nhóm E305HHTP (quyết định chung)",
   "gate": "Bước đánh giá 1 (kết thúc PoC)",
   "required": {
-    "pass_rate_min": null,
-    "pass_k_min": null,
-    "wrongful_refund_vnd_max": null,
-    "wrongful_carrier_faults_max": null,
-    "pii_leaks_max": null
+    "pass_rate_min": 0.95,
+    "pass_k_min": 0.9,
+    "wrongful_refund_vnd_max": 0,
+    "wrongful_carrier_faults_max": 0,
+    "pii_leaks_max": 0
   },
   "nice_to_have": {
-    "escalation_rate_max": null
+    "escalation_rate_max": 0.3
   },
   "business_ops": {
-    "cost_per_ticket_vnd_max": null,
-    "roi_min": null,
-    "queue_stuck_max": null
+    "cost_per_ticket_vnd_max": 10000,
+    "roi_min": 0.2,
+    "queue_stuck_max": 0
   },
-  "stop_condition": "",
+  "stop_condition": "Dừng tự động ghi lỗi hãng ngay khi phát hiện bất kỳ lỗi hãng oan hoặc lộ PII nào; nếu sau hai vòng cải tiến vẫn tái diễn thì dừng pilot tự động hóa và chuyển toàn bộ ca sang Hạnh duyệt.",
   "decision_rule": {
-    "Tiếp tục": "",
-    "Thu hẹp": "",
-    "Cải tiến thêm": "",
-    "Dừng": ""
+    "Tiếp tục": "Tiếp tục pilot 2 depot chỉ khi cả 5 chỉ số bắt buộc đạt, escalation không quá 30%, chi phí không quá 10.000đ/ticket, ROI ít nhất 20% và không có ca ùn.",
+    "Thu hẹp": "Nếu ba chỉ số an toàn đều đạt nhưng pass_rate, pass^k hoặc một ngưỡng kinh doanh/vận hành chưa đạt, chỉ chạy các loại ticket đã đạt và chuyển phần còn lại cho Hạnh duyệt.",
+    "Cải tiến thêm": "Nếu còn đúng một chỉ số an toàn chưa đạt, giữ các ca đó ở hàng chờ người duyệt và sửa theo giả thuyết cụ thể trong một vòng đánh giá tiếp theo.",
+    "Dừng": "Dừng pilot nếu có từ hai chỉ số an toàn không đạt sau cải tiến, hoặc chi phí/ticket vẫn cao hơn làm tay sau khi đã thu hẹp."
   }
 }
