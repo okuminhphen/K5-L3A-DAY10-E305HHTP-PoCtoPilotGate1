@@ -23,6 +23,8 @@ Tiêu chí đã ký ở Phiếu A. Từ phút 65 bàn mới được chạy tr�
 
 ## B0 · Nhật ký lần chạy vòng 1
 
+Đối chiếu đã chạy: `R-base-before-20261118-173544-d92d4f` (base, trước cổng: pass_rate 0,9909; pass_k 0,9545; hoàn sai 20.000đ; lỗi hãng oan 1); `R-S3-after-20261118-173847-7c0e64` (after: mọi chỉ số bắt buộc 1,0 hoặc 0; escalation 0,0833; ROI 1,46); mốc prepared `R-S3-prepared-20261118-174133-7c0e64`.
+
 *Yêu cầu: ít nhất 3 lần chạy, mỗi lần đổi một thứ, có mã lần chạy và khoảng tin cậy.* Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi
 một dòng vào `runs/journal.jsonl`. Việc của bàn là điền cột "Đổi MỘT thứ gì" (tham số `--note`) và cột "Kết luận".
 Mọi con số trong quyết định Gate 1 phải trỏ về một dòng ở đây hoặc ở Phiếu C mục C0.
@@ -39,6 +41,8 @@ Mọi con số trong quyết định Gate 1 phải trỏ về một dòng ở đ
 <a id="b1"></a>
 
 ## B1 · Câu 2.1 · Lần chạy đánh giá đầu tiên
+
+Lần base `R-base-before-20261118-173544-d92d4f` chưa đạt ngưỡng hoàn sai 0đ và lỗi hãng oan 0. Đây là tác hại không đảo ngược với khách/hãng nên chọn **kết hợp**: tự chặn lệnh ghi khi tracking hoặc policy không đủ căn cứ; chuyển người duyệt các ca ngoại lệ.
 
 ```bash
 python3 -m lab10.eval --suite base --stage base --note "baseline"
@@ -63,6 +67,8 @@ Khuyến nghị (khoanh một): **kết hợp**. Vì: Các ngưỡng an toàn s�
 <a id="b2"></a>
 
 ## B2 · Câu 2.2 · Bảng soát lỗi cho `T-002@55`
+
+`T-002@55`: sổ cái hoàn 20.000đ và ghi một lỗi VNX dù tracking chỉ trễ 2 ngày; khách không thấy nhưng hãng chịu phạt — lỗi chìm, hệ trọng cao. Nguồn là đầu vào/độ liên quan: model đã ưu tiên số ngày khách tự khai hơn tracking. Hướng xử lý: `write_gate` tính lại quyền lợi từ tracking, khác biệt hoặc thiếu căn cứ thì chuyển NV-HANH; theo dõi `model_override` và lỗi hãng oan.
 
 ```bash
 python3 -m lab10.trace --suite base --ticket T-002 --seed 55
@@ -148,6 +154,8 @@ sự thật về ngày giao · lệch khi điểm phát quét sót hoặc nhập
 
 ## B4 · Câu 2.4 · HAZOP vòng 1 trên tool của agent
 
+Tool phân tích: `file_carrier_fault`. WRONG: `delay_cause` không phải CARRIER nhưng model ghi lỗi → hãng chịu phạt; gate đọc tracking và chỉ cho ghi khi cause=CARRIER. INVALID: index policy cũ sau ngày hiệu lực → hoàn/lỗi sai; `pre_guard` pin policy theo `as_of`. INCOMPLETE: thiếu `delay_cause` → không đủ chứng cứ; chặn và chuyển duyệt. Nhánh chưa thấy trực tiếp: một hãng có nhiều lỗi trong ngày; trần `max_auto_strikes_per_carrier_per_day=2` giới hạn thiệt hại. Ngoài code, một người duyệt chỉ xử lý 6 ca/giờ nên theo dõi hàng chờ và gọi/tắt theo runbook.
+
 *Chỉ làm MỘT vòng, trên MỘT tool. Đây là HAZOP vòng 1; HAZOP của thẻ sự cố viết riêng ở Phiếu C mục C4, không ghi đè bảng này.*
 
 **Khung tư duy.** HAZOP không hỏi "cái gì có thể hỏng" một cách chung chung. Nó cầm từng **từ gợi ý** áp vào từng **dòng dữ
@@ -190,6 +198,8 @@ tiền, hãng bị kéo theo một lỗi · hiện chỉ có trần "không vư�
 <a id="b5"></a>
 
 ## B5 · Câu 2.4 · Checklist go-live 9 nhóm việc, lần 1
+
+Kết quả lần 1: Chất lượng, dữ liệu, quyền hạn, chi phí và vận hành **Xong** theo checkpoint `146cff5c` và report prepared; bảo mật/pháp lý **Xong có điều kiện** (chặn `name`, `phone`, `street`, `customer_note`; lỗi hãng cần nguyên nhân tracking); hiệu năng **Chưa** vì chưa có tải thật; quyết định **Chưa ký lại** do hash tiêu chí ký không khớp file hiện hành. PIC: Hoàng Hải Nam (chất lượng/chi phí), Phạm Thanh Tùng (dữ liệu/quyết định), Nguyễn Cảnh Hiếu (quyền hạn/hạ tầng), Lê Minh Phụng (vận hành/pháp lý).
 
 Checklist chín nhóm việc phải xong trước khi chạy thử thật. Bàn điền lần đầu ở đây, rồi cập nhật sau sự cố ở Phiếu C mục C11.
 Cột "Bằng chứng lấy từ đâu" trỏ tới mục bàn đã điền ở bước khác; không điền thêm phiếu nào chỉ để lấp cột này.
@@ -368,6 +378,8 @@ Lượng ticket có thể dồn gấp ba trong một giờ (ngày sale, sau bão
 <a id="b8"></a>
 
 ## B8 · Chốt cổng vòng 1 và quyết định Gate 1 · v1 (phút 105–115)
+
+Mốc cổng vòng 1: hash `146cff5c`; evidence prepared `R-S3-prepared-20261118-174133-7c0e64`. Không còn vượt trần kỹ thuật/kinh doanh ở prepared, nhưng bằng chứng tải thật và tính toàn vẹn hash tiêu chí còn thiếu. Quyết định v1: **Cải tiến thêm** — giữ cổng, đo thêm dữ liệu thật trước khi cho Tiếp tục; PIC vận hành: Lê Minh Phụng.
 
 Làm đúng thứ tự:
 

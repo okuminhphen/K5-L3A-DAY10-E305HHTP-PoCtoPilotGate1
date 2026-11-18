@@ -19,7 +19,19 @@ def escalation_rate(trials):
     return sum(t["status"] == "escalated" for t in trials) / max(1, len(trials))
 
 
+def effective_policy_v4_rate(trials):
+    """Share of trials whose guard pinned REFUND-v4; detects stale-policy drift after 2026-12-01."""
+    pinned = 0
+    for trial in trials:
+        for event in trial.get("events", []):
+            if event.get("type") == "guard" and event.get("kind") == "policy_pinned":
+                pinned += event.get("policy_id") == "REFUND-v4"
+                break
+    return pinned / max(1, len(trials))
+
+
 MONITORS = {
     "escalation_rate": escalation_rate,     # có sẵn; KHÔNG tính là metric mới của đội
+    "effective_policy_v4_rate": effective_policy_v4_rate,
 }
 STARTER_MONITORS = ("escalation_rate",)

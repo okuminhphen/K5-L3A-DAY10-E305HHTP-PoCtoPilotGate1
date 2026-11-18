@@ -1,12 +1,17 @@
 {
-  "team": "",
-  "members": [],
-  "incident": "",
-  "decision_v1": "",
-  "decision_v2": "",
+  "team": "K5-L3A-DAY10-E305HHTP-PoCtoPilotGate1",
+  "members": [
+    "HoangHaiNam-2A202603694",
+    "PhamThanhTung-2A202603695",
+    "NguyenCanhHieu-2A202603667",
+    "LeMinhPhung-2A202603693"
+  ],
+  "incident": "S3",
+  "decision_v1": "Cải tiến thêm",
+  "decision_v2": "Tiếp tục",
   "three_lines": {
-    "environment_assumption": "",
-    "reduce_or_prevent": "",
-    "measure_in_pilot": ""
+    "environment_assumption": "Chính sách có hiệu lực và nguyên nhân trễ trong tracking luôn được cập nhật đúng lúc; ngoài thực tế dữ liệu có thể trễ hoặc thiếu.",
+    "reduce_or_prevent": "Cổng đọc policy theo ngày hiệu lực, tính lại theo tracking và chặn lỗi hãng không đủ căn cứ nên ngăn thao tác ghi sai khi nguồn sự thật còn đúng.",
+    "measure_in_pilot": "Trong pilot thật cần đo độ trễ và tỷ lệ thiếu của dữ liệu tracking/policy, thời gian xử lý tranh chấp hãng, cùng tỷ lệ ca chuyển người duyệt theo kho và hãng."
   }
 }
