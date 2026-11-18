@@ -71,9 +71,9 @@ nhau chia cho số lần chạy có sự kiện `proposal`; lần chạy không 
 
 ### Câu 1.5 · Chọn MỘT kết luận và giải thích một câu
 
-Số minh hoạ trong đề (không phải số của bàn). Khoanh: **(a) · (b) · (c) · (d)**
+Số minh hoạ trong đề (không phải số của bàn). Khoanh: **(b)**
 
-Giải thích một câu: …
+Giải thích một câu: Y chỉ hơn X đúng 1 trong 50 lần chạy, và pass_rate 1,0 của Y vẫn nằm trong khoảng tin cậy 95% [0,94; 1,0] của X, nên chênh lệch này có thể chỉ do may rủi và chưa đủ căn cứ để kết luận Y tốt hơn X.
 
 ---
 
