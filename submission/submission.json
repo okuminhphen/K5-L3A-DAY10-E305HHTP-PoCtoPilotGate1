@@ -10,8 +10,8 @@
   "decision_v1": "Thu hẹp",
   "decision_v2": "Tiếp tục",
   "three_lines": {
-    "environment_assumption": "Giả định rằng dữ liệu nguyên nhân giao trễ trên tracking log của các đơn vị đối tác luôn được nhân viên bưu cục cập nhật trung thực và kịp thời trước khi khách hàng gửi khiếu nại.",
-    "reduce_or_prevent": "Các cổng trong guards.py thực sự NGĂN hẳn tác hại, vì chúng nằm ở tầng hạ tầng can thiệp trực tiếp trước các lệnh ghi (write_gate), độc lập với model LLM; nếu vi phạm điều kiện an toàn thì thao tác ghi lập tức bị chặn đứng.",
-    "measure_in_pilot": "Cần đo lại độ trễ ghi nhận nguyên nhân trễ (delay_cause) từ hệ thống API của các hãng vận chuyển thứ ba khi xảy ra thiên tai thực tế và tỉ lệ tài xế khai báo sai nguyên nhân để trốn phạt."
+    "environment_assumption": "Đội giả định hãng cập nhật nguyên nhân trễ trên tracking trước khi LogiX xử lý yêu cầu hoàn, kể cả khi bão làm chậm việc cập nhật.",
+    "reduce_or_prevent": "Cổng ngăn ghi lỗi khi tracking thiếu căn cứ hoặc đã chạm trần trong mô phỏng tuần tự, và giảm rủi ro ngoài thực tế vì sổ có thể cập nhật chậm khi nhiều lệnh đến cùng lúc.",
+    "measure_in_pilot": "Đo độ trễ cập nhật tracking, số lần chạm hoặc vượt trần khi xử lý đồng thời và tỉ lệ chuyển người theo depot trước Bước đánh giá 2."
   }
 }

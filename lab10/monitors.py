@@ -21,7 +21,7 @@ def escalation_rate(trials):
 
 def carrier_fault_rate(trials):
     """Tỉ lệ ticket có ghi lỗi hãng vận chuyển (bắt sự cố phạt dồn dập đối tác)."""
-    return sum(len(t.get("faults", [])) for t in trials) / max(1, len(trials))
+    return sum(bool(t.get("faults")) for t in trials) / max(1, len(trials))
 
 
 def force_majeure_rate(trials):
@@ -40,15 +40,25 @@ def effective_policy_v4_rate(trials):
     pinned = 0
     for trial in trials:
         for event in trial.get("events", []):
-            if event.get("type") == "guard" and event.get("kind") == "policy_pinned":
-                pinned += event.get("policy_id") == "REFUND-v4"
+            if event.get("type") == "policy":
+                pinned += event.get("pinned", False) and event.get("policy_id") == "REFUND-v4"
                 break
     return pinned / max(1, len(trials))
+
+
+def carrier_strike_cap_hits(trials):
+    """Số lượt cổng bỏ lệnh ghi vì hãng đã chạm trần tự động."""
+    return sum(
+        event.get("type") == "guard" and event.get("kind") == "carrier_strike_cap_hit"
+        for trial in trials
+        for event in trial.get("events", [])
+    )
 
 
 MONITORS = {
     "escalation_rate": escalation_rate,     # có sẵn; KHÔNG tính là metric mới của đội
     "carrier_fault_rate": carrier_fault_rate,
+    "carrier_strike_cap_hits": carrier_strike_cap_hits,
     "force_majeure_rate": force_majeure_rate,
     "effective_policy_v4_rate": effective_policy_v4_rate,
 }

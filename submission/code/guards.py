@@ -48,34 +48,46 @@ def write_gate(ctx, action):
 
     order = ctx.tools.lookup_order(action.get("order_id"))
     if not order:
+        if tool == "file_carrier_fault":
+            return Verdict.deny("Không tìm thấy đơn trong tracking.")
         return Verdict.allow()
 
     policies = ctx.tools.lookup_policies()
     policy = H.effective_policy(policies, ctx.as_of)
     if not policy:
+        if tool == "file_carrier_fault":
+            return Verdict.deny("Không xác định được chính sách đang hiệu lực.")
         return Verdict.allow()
 
-    parcel = H.ticket_parcel(order, ctx.ticket, ctx.as_of)
-    delay_days = H.db_delay_days(parcel, ctx.as_of)
-    cause = parcel.get("delay_cause")
-
-    # Cổng 1: Chống ghi lỗi oan cho hãng vận chuyển (bảo vệ đối tác và chị Oanh đối soát)
+    # Kiểm đúng kiện và đếm lỗi của hãng trước khi ghi vào sổ trong ngày.
     if tool == "file_carrier_fault":
-        # Không có nguyên nhân trễ ghi nhận trong tracking -> Chặn ghi lỗi (thẻ S3)
-        if not cause:
-            return Verdict.deny("Tracking chưa ghi nhận nguyên nhân trễ, không được tự ý ghi lỗi hãng.")
+        strike_parcel = next(
+            (p for p in order["parcels"] if p["parcel_id"] == action.get("parcel_id")),
+            None,
+        )
+        if strike_parcel is None or not strike_parcel.get("delay_cause"):
+            return Verdict.deny("Tracking chưa ghi nhận nguyên nhân trễ của kiện cần xử lý.")
 
-        if not H.carrier_at_fault(policy, parcel, delay_days):
-            return Verdict.deny("Hãng vận chuyển không có lỗi theo tracking DB và chính sách hiệu lực")
+        carrier_id = strike_parcel["carrier_id"]
+        if action.get("carrier_id") != carrier_id:
+            return Verdict.deny("Hãng trong lệnh ghi không khớp với kiện trong tracking.")
 
-        # Hãng nhận từ 2 lỗi trở lên trong cùng ngày -> Chặn ghi lỗi tự động dồn dập (thẻ S3)
-        carrier_id = action.get("carrier_id")
-        today_faults = ctx.tools.fault_rows(carrier_id=carrier_id)
-        if len(today_faults) >= 2:
-            return Verdict.deny(f"Hãng {carrier_id} đã nhận {len(today_faults)} lỗi trong ngày, tạm dừng ghi lỗi tự động chờ người xác nhận.")
+        strike_delay = H.db_delay_days(strike_parcel, ctx.as_of)
+        if not H.carrier_at_fault(policy, strike_parcel, strike_delay):
+            return Verdict.deny("Hãng vận chuyển không có lỗi theo tracking DB và chính sách hiệu lực.")
 
-        if action.get("delay_days") != delay_days:
-            return Verdict.modify("Sửa số ngày trễ về đúng dữ liệu tracking DB", delay_days=delay_days)
+        strike_cap = ctx.tools.ops_limits().get("max_auto_strikes_per_carrier_per_day")
+        if type(strike_cap) is not int or strike_cap < 0:
+            return Verdict.deny("Không xác định được trần ghi lỗi tự động đã thống nhất với Ops.")
+
+        strike_count = len(ctx.tools.fault_rows(carrier_id=carrier_id))
+        if strike_count >= strike_cap:
+            ctx.log("carrier_strike_cap_hit", carrier_id=carrier_id, count=strike_count,
+                    limit=strike_cap, as_of=ctx.as_of)
+            return Verdict.deny("Hãng đã chạm trần lỗi tự động. Cần vận hành xác minh.")
+
+        if action.get("delay_days") != strike_delay:
+            return Verdict.modify("Sửa số ngày trễ theo dữ liệu tracking của kiện.", delay_days=strike_delay)
 
     # Cổng 2: Chống hoàn sai tiền / hoàn vượt mức chính sách (khắc phục T-002@55 model override)
     if tool == "issue_refund":
@@ -84,7 +96,9 @@ def write_gate(ctx, action):
         if existing:
             return Verdict.deny("Đã hoàn tiền cho ticket này rồi, chặn hoàn trùng")
 
-        entitled = H.entitlement_vnd(policy, order, delay_days, cause)
+        parcel = H.ticket_parcel(order, ctx.ticket, ctx.as_of)
+        delay_days = H.db_delay_days(parcel, ctx.as_of)
+        entitled = H.entitlement_vnd(policy, order, delay_days, parcel.get("delay_cause"))
         if entitled <= 0:
             return Verdict.deny("Đơn hàng không đủ điều kiện hoàn tiền theo tracking DB")
         if action.get("amount_vnd", 0) > entitled:

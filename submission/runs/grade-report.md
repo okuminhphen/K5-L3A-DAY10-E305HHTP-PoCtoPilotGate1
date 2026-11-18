@@ -2,10 +2,10 @@
 
 *Đây là kết quả TỰ KIỂM TRA của bàn, không phải điểm. Bài được một team chấm tự động chấm lại sau buổi học.*
 
-- Mã lần chạy: `R-S3-grade-20261118-175252-ee99bf` · bàn: `K5-L3A-DAY10-E305HHTP-PoCtoPilotGate1` · grader `lab10-1.0` · 0.64s
-- Ba mốc: base `R-S3-before-20261118-175253-ee99bf` · prepared `R-S3-prepared-20261118-175253-ee99bf` · after `R-S3-after-20261118-175253-ee99bf` (report + trace trong runs/)
+- Mã lần chạy: `R-S3-grade-20261118-192115-a8016b` · bàn: `K5-L3A-DAY10-E305HHTP-PoCtoPilotGate1` · grader `lab10-1.0` · 0.55s
+- Ba mốc: base `R-S3-before-20261118-192115-a8016b` · prepared `R-S3-prepared-20261118-192115-a8016b` · after `R-S3-after-20261118-192115-a8016b` (report + trace trong runs/)
 - Mốc prepared (cổng vòng 1): đã chốt `c0c09852`, còn nguyên
-- Hash code đội (guards + monitors + switches + cổng vận hành): `ee99bfcd44ec`
+- Hash code đội (guards + monitors + switches + cổng vận hành): `a8016bce218a`
 - Hash Bản tiêu chí chấp nhận: `7b9fcf2db29a` · đã ký: `7b9fcf2db29a` · KHÔNG ĐỔI
 - Thẻ đang kiểm: `S3` · dòng "Thẻ đã bốc" bàn ghi trong phiếu: S3 · khớp
 
@@ -16,7 +16,7 @@
 | 3 visible | ✅ | base có vấn đề: True; after sạch: True; ticket còn hỏng: không; trần còn vượt: không |
 | 4 hidden | — | máy này không có bài kiểm tra ẩn (team chấm sẽ chạy sau buổi học) |
 | 5 regression | ✅ | bộ nền pass_rate 0.9909 → 1.0; ca mới hỏng: không |
-| 6 monitor | ✅ | metric mới: ['carrier_fault_rate', 'force_majeure_rate', 'effective_policy_v4_rate']; sáng đèn: [('carrier_fault_rate', 'before', 0.509091, 0.833333), ('carrier_fault_rate', 'after', 0.5, 0.333333), ('force_majeure_rate', 'before', 0.045455, 0.166667), ('force_majeure_rate', 'after', 0.045455, 0.166667)] |
+| 6 monitor | ✅ | metric mới: ['carrier_fault_rate', 'carrier_strike_cap_hits', 'force_majeure_rate', 'effective_policy_v4_rate']; sáng đèn: [('carrier_fault_rate', 'before', 0.509091, 0.833333), ('carrier_fault_rate', 'after', 0.5, 0.333333), ('carrier_strike_cap_hits', 'after', 0.0, 10.0), ('force_majeure_rate', 'before', 0.045455, 0.166667), ('force_majeure_rate', 'after', 0.045455, 0.166667), ('effective_policy_v4_rate', 'after', 0.0, 1.0)] |
 
 **Kinh doanh · vận hành · pháp lý trên gói sự cố bàn nhìn thấy** (tiền tính cho một ngày giả lập)
 
