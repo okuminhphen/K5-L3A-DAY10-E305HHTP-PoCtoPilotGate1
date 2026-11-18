@@ -54,4 +54,4 @@ py -X utf8 -m lab10.trace --suite base --stage after --adhoc $demoNote --order O
 2. Mỗi thành viên xác nhận mục cá nhân trong [TEAM.md](../TEAM.md), khai phần dùng AI nếu có và tự viết exit ticket. Trưởng nhóm xác nhận quyền của team chấm theo hướng dẫn lớp.
 3. Gửi Lab Coach kết quả và lỗi kỹ thuật qua kênh của lớp. Mỗi người tự nộp link repo trên LMS trước hạn trong [SUBMISSION.md](../SUBMISSION.md).
 
-**Ghi chú có thể gửi Lab Coach:** “Nhóm E305HHTP, thẻ S3. Lệnh gom báo ĐỦ THÀNH PHẦN, visible và hồi quy đạt. Integrity còn thiếu 28 file của các thẻ khác; nhật ký có lần đo 16:14:57 trước bản ký 16:32:33 ngày 18/11. Nhờ Coach kiểm tra cách xử lý hai điều kiện này. Báo cáo: R-S3-grade-20261118-193511-540e01.”
+**Ghi chú có thể gửi Lab Coach:** “Nhóm E305HHTP, thẻ S3. Lệnh gom báo ĐỦ THÀNH PHẦN, visible và hồi quy đạt. Integrity còn thiếu 28 file của các thẻ khác; nhật ký có lần đo 16:14:57 trước bản ký 16:32:33 ngày 18/11. Nhờ Coach kiểm tra cách xử lý hai điều kiện này. Báo cáo: R-S3-grade-20261118-231303-a52a48.”

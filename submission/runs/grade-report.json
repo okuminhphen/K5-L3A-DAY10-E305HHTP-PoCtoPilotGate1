@@ -1,8 +1,8 @@
 {
- "run_id": "R-S3-grade-20261118-193511-540e01",
+ "run_id": "R-S3-grade-20261118-231303-a52a48",
  "incident": "S3",
  "grader_version": "lab10-1.0",
- "code_hash": "540e01c9c6f186a1572378efc53260d6402306bd0b6da7132fe134a22d1f0289",
+ "code_hash": "a52a487ed5c8a67b8758c6ca2ad89bd9b6190da7b45d010690824949509345b0",
  "integrity": {
   "ok": false,
   "changed": [
@@ -170,7 +170,8 @@
     "carrier_fault_rate": 0.509091,
     "carrier_strike_cap_hits": 0.0,
     "force_majeure_rate": 0.045455,
-    "effective_policy_v4_rate": 0.0
+    "effective_policy_v4_rate": 0.0,
+    "delay_override_rate": 0.045455
    },
    "by_segment": {
     "warehouse": [
@@ -425,7 +426,8 @@
     "carrier_fault_rate": 0.833333,
     "carrier_strike_cap_hits": 0.0,
     "force_majeure_rate": 0.166667,
-    "effective_policy_v4_rate": 0.0
+    "effective_policy_v4_rate": 0.0,
+    "delay_override_rate": 0.0
    },
    "by_segment": {
     "warehouse": [
@@ -616,7 +618,8 @@
     "carrier_fault_rate": 0.5,
     "carrier_strike_cap_hits": 0.0,
     "force_majeure_rate": 0.045455,
-    "effective_policy_v4_rate": 0.0
+    "effective_policy_v4_rate": 0.0,
+    "delay_override_rate": 0.045455
    },
    "by_segment": {
     "warehouse": [
@@ -836,7 +839,8 @@
     "carrier_fault_rate": 0.5,
     "carrier_strike_cap_hits": 0.0,
     "force_majeure_rate": 0.166667,
-    "effective_policy_v4_rate": 1.0
+    "effective_policy_v4_rate": 0.0,
+    "delay_override_rate": 0.0
    },
    "by_segment": {
     "warehouse": [
@@ -1021,7 +1025,8 @@
     "carrier_fault_rate": 0.470588,
     "carrier_strike_cap_hits": 0.0,
     "force_majeure_rate": 0.058824,
-    "effective_policy_v4_rate": 0.0
+    "effective_policy_v4_rate": 0.0,
+    "delay_override_rate": 0.047059
    },
    "by_segment": {
     "warehouse": [
@@ -1206,7 +1211,8 @@
     "carrier_fault_rate": 0.3,
     "carrier_strike_cap_hits": 5.0,
     "force_majeure_rate": 0.2,
-    "effective_policy_v4_rate": 1.0
+    "effective_policy_v4_rate": 1.0,
+    "delay_override_rate": 0.0
    },
    "by_segment": {
     "warehouse": [
@@ -1306,9 +1312,9 @@
   }
  },
  "run_ids": {
-  "before": "R-S3-before-20261118-193511-540e01",
-  "prepared": "R-S3-prepared-20261118-193511-540e01",
-  "after": "R-S3-after-20261118-193511-540e01"
+  "before": "R-S3-before-20261118-231304-a52a48",
+  "prepared": "R-S3-prepared-20261118-231304-a52a48",
+  "after": "R-S3-after-20261118-231304-a52a48"
  },
  "visible": {
   "before_red": true,
@@ -1333,7 +1339,8 @@
    "carrier_fault_rate",
    "carrier_strike_cap_hits",
    "force_majeure_rate",
-   "effective_policy_v4_rate"
+   "effective_policy_v4_rate",
+   "delay_override_rate"
   ],
   "lit": [
    {
@@ -1371,6 +1378,18 @@
     "stage": "after",
     "base": 0.0,
     "incident": 1.0
+   },
+   {
+    "name": "delay_override_rate",
+    "stage": "before",
+    "base": 0.045455,
+    "incident": 0.0
+   },
+   {
+    "name": "delay_override_rate",
+    "stage": "after",
+    "base": 0.047059,
+    "incident": 0.0
    }
   ],
   "errors": []
@@ -1399,5 +1418,5 @@
  "hard_gates_ok": false,
  "score": null,
  "verdict": "FAIL",
- "seconds": 0.645
+ "seconds": 0.57
 }

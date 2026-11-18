@@ -36,14 +36,24 @@ def force_majeure_rate(trials):
 
 
 def effective_policy_v4_rate(trials):
-    """Share of trials whose guard pinned REFUND-v4; detects stale-policy drift after 2026-12-01."""
-    pinned = 0
-    for trial in trials:
-        for event in trial.get("events", []):
-            if event.get("type") == "policy":
-                pinned += event.get("pinned", False) and event.get("policy_id") == "REFUND-v4"
-                break
-    return pinned / max(1, len(trials))
+    """Tỉ lệ ticket mà chỉ mục chính sách đang bật khác chính sách hiệu lực theo ngày (drift chính sách).
+
+    Không gắn với mã chính sách cụ thể: đếm ticket có sự kiện guard `policy_index_stale` do pre_guard ghi.
+    Tên giữ nguyên để khớp report và Phiếu C mục C8.
+    """
+    stale = sum(
+        any(e.get("type") == "guard" and e.get("kind") == "policy_index_stale" for e in trial.get("events", []))
+        for trial in trials
+    )
+    return stale / max(1, len(trials))
+
+
+def delay_override_rate(trials):
+    """Tỉ lệ ticket mà model lấy số ngày trễ khách tự khai thay cho tracking (sự kiện `model_override`)."""
+    return sum(
+        any(e.get("type") == "model_override" for e in trial.get("events", []))
+        for trial in trials
+    ) / max(1, len(trials))
 
 
 def carrier_strike_cap_hits(trials):
@@ -61,5 +71,6 @@ MONITORS = {
     "carrier_strike_cap_hits": carrier_strike_cap_hits,
     "force_majeure_rate": force_majeure_rate,
     "effective_policy_v4_rate": effective_policy_v4_rate,
+    "delay_override_rate": delay_override_rate,
 }
 STARTER_MONITORS = ("escalation_rate",)

@@ -88,13 +88,30 @@ Gợi ý để Phạm Thanh Tùng xác nhận. Điều học được: chi phí 
 ## NguyenCanhHieu-2A202603667
 
 ### Phần việc phụ trách
+- Vai trong bàn: Kỹ sư cổng (Gate Engineer).
+- Phụ trách kỹ thuật hệ thống, thực thi các lệnh CLI (`eval`, `trace`, `gate`, `checkpoint`, `grade`, `check_submission`).
+- Phụ trách viết code chốt chặn an toàn trong `lab10/guards.py` và chỉ số giám sát mới trong `lab10/monitors.py`.
+- Mục phiếu phụ trách: Phiếu A (Câu 1.3, 1.5); Phiếu B (B0, B1, B2, B7.1, B7.2, B7.3); Phiếu C (C0, C1, C2, C7, C8).
 
-Kỹ sư cổng. PIC chất lượng theo Phiếu B mục B5 và Phiếu C mục C11.
+### Đóng góp cụ thể
+- Đo lường và phân tích baseline vòng 1, dùng lệnh trace phát hiện lỗi model override tại ticket `T-002@55`.
+- Xây dựng 3 chốt chặn trong `guards.py`: ghim chính sách hiệu lực `pre_guard`, kiểm soát quyền lợi hoàn tiền và ngăn phạt oan đối tác trong `write_gate`.
+- Thực hiện checkpoint chốt cổng vòng 1 (`c0c09852`), đưa pass_rate từ 0.9909 lên 1.0 và hoàn sai về 0.
+- Xử lý Sự cố S3 (Mekong Delta Ship): phân tích và lập trình 3 cơ chế an toàn bổ sung trong `guards.py` (chặn ghi lỗi khi bão lũ theo chính sách v4, chặn ghi lỗi khi thiếu dữ liệu tracking, giới hạn tối đa 2 lỗi tự động/ngày cho một hãng để tránh đối tác bị đình chỉ).
+- Lập trình 5 chỉ số theo dõi mới trong `monitors.py`: `carrier_fault_rate`, `force_majeure_rate`, `carrier_strike_cap_hits`, `effective_policy_v4_rate` (đếm sự kiện `policy_index_stale`, không gắn mã chính sách) và `delay_override_rate` (tỉ lệ ticket model lấy số ngày khách khai thay cho tracking).
+- Bổ sung 2 cổng giới hạn thiệt hại trong `write_gate` nhánh `issue_refund`: kiểm tra phê duyệt (đúng ticket, còn hiệu lực, đủ hạn mức, đúng người duyệt `NV-HANH`) và trần hoàn tự động 300.000đ/khách/ngày theo `ops_limits`; vượt thì chuyển người duyệt. Hai cổng này không làm đổi số liệu S3 và bộ nền.
+- Đồng bộ Phiếu B (B2, B7.3) và Phiếu C (C7, C8) với code hiện tại; chạy lại `grade` và `check_submission --collect` trên đúng code cuối.
+- Kết quả tự kiểm tra S3: `visible ✅`, `regression ✅` (bộ nền pass_rate 0.9909 → 1.0, không ca mới hỏng), `monitor ✅`. Mục `integrity ❌` do repo chỉ nhận thẻ S3 (thiếu file thẻ S1, S2, S4–S8); mục `hidden` do team chấm chạy sau buổi học.
 
-### Đóng góp cụ thể và bằng chứng
+### Bằng chứng
+- Mã commit: `05a724f` (Chốt cổng vòng 1, quyết định v1), `c47fb3b` (Ký tiêu chí).
+- Mã lần chạy bộ nền: base `R-base-before-20261118-161851-bde05c`, prepared `R-base-prepared-20261118-165600-17ba81`, after `R-base-after-20261118-231304-a52a48`.
+- Mã lần chạy sự cố S3: base `R-S3-before-20261118-171600-1a1c32`, after `R-S3-after-20261118-171600-1a1c32` (pass_rate 1.0, 0 hoàn sai, 0 phạt oan).
+- Report tự kiểm tra cuối: `R-S3-grade-20261118-231303-a52a48` (base · prepared · after: pass_rate 0.25 · 0.8333 · 1.0; lỗi hãng oan 35 · 10 · 0; hoàn sai 900.000đ · 0 · 0).
 
-Phần kiểm cổng và chất lượng gồm bản chốt vòng 1 `c0c09852`, kiểm hồi quy và report ba mốc. Đối chiếu commit `05a724f` (chốt vòng 1), `1b4448d` (cập nhật hồ sơ) và lần chạy `R-S3-grade-20261118-193511-540e01`.
+### Sử dụng AI
+- Dùng trợ lý AI (Claude) để rà soát code cổng và phiếu so với đề, gợi ý bổ sung 2 cổng giới hạn thiệt hại, tổng quát hoá monitor và đồng bộ mã lần chạy trong phiếu. Các ngưỡng và quyết định là của bàn; mọi thay đổi đã được chạy lại test, `grade` và `check_submission` để kiểm chứng.
 
 ### Exit ticket
-
-Gợi ý để Nguyễn Cảnh Hiếu xác nhận. Điều học được: chạy đủ phạm vi và chạy phạm vi thu hẹp giúp tách tác dụng của cổng khỏi tác dụng của việc bỏ ticket. Điều còn chưa chắc: bài kiểm tra ẩn và tải đồng thời sẽ phát hiện nhánh nào mà bộ nhìn thấy chưa phủ. Bổ sung việc đã trực tiếp làm và phần có dùng AI nếu có.
+- Một điều học được: Sự nguy hiểm của "Concept Drift" và lỗi chìm (silent failure) trong hệ thống AI; các chốt chặn an toàn (write_gate) độc lập ngoài model là lớp bảo vệ sống còn để bảo vệ đối tác và tổ chức.
+- Một điều còn chưa chắc: Cách tối ưu hóa độ trễ xử lý khi mở rộng thêm nhiều quy tắc kiểm tra logic đồng thời trong `write_gate` trên quy mô hàng trăm nghìn ticket mỗi ngày.

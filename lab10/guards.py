@@ -52,6 +52,10 @@ def pre_guard(ctx):
     policies = ctx.tools.lookup_policies()
     policy = H.effective_policy(policies, ctx.as_of)
     if policy:
+        indexed = next((p for p in policies if p.get("index_active")), None)
+        if indexed is None or indexed["policy_id"] != policy["policy_id"]:
+            ctx.log("policy_index_stale", effective=policy["policy_id"],
+                    indexed=indexed["policy_id"] if indexed else None, as_of=ctx.as_of)
         return Verdict.allow(policy_id=policy["policy_id"])
     return Verdict.allow()
 
@@ -112,13 +116,41 @@ def write_gate(ctx, action):
         if existing:
             return Verdict.deny("Đã hoàn tiền cho ticket này rồi, chặn hoàn trùng")
 
+        amount = action.get("amount_vnd", 0)
+        approval_id = action.get("approval_id")
+        if approval_id:
+            # Cổng 4: phê duyệt phải đúng ticket, còn hiệu lực, đủ hạn mức và đúng người đứng tên
+            found = ctx.tools.lookup_approvals(approval_id=approval_id)
+            appr = found[0] if found else None
+            approver = ((ctx.gates or {}).get("operations") or {}).get("approver_id")
+            if (appr is None or appr.get("status") != "valid"
+                    or appr.get("ticket_id") != action.get("ticket_id")
+                    or (appr.get("expires_at") and appr["expires_at"] < ctx.as_of)
+                    or amount > appr.get("max_vnd", 0)
+                    or (approver and appr.get("approver_id") != approver)):
+                ctx.log("invalid_approval", approval_id=approval_id, ticket_id=action.get("ticket_id"))
+                return Verdict.escalate("Phê duyệt không hợp lệ cho ticket này, chuyển người duyệt.")
+
         parcel = H.ticket_parcel(order, ctx.ticket, ctx.as_of)
         delay_days = H.db_delay_days(parcel, ctx.as_of)
         entitled = H.entitlement_vnd(policy, order, delay_days, parcel.get("delay_cause"))
         if entitled <= 0:
             return Verdict.deny("Đơn hàng không đủ điều kiện hoàn tiền theo tracking DB")
-        if action.get("amount_vnd", 0) > entitled:
+        if amount > entitled:
             return Verdict.modify("Chỉnh số tiền hoàn về đúng mức quyền lợi theo chính sách", amount_vnd=entitled)
+
+        if not approval_id:
+            # Cổng 5: trần hoàn tự động cho một khách trong ngày (ops_limits đã thống nhất với Finance)
+            per_customer_cap = ctx.tools.ops_limits().get("max_auto_refund_per_customer_per_day_vnd")
+            if isinstance(per_customer_cap, int):
+                seed_rows = getattr(getattr(ctx.tools, "_w", None), "seed_rows", 0)
+                today = [r for r in ctx.tools.ledger_rows()[seed_rows:]
+                         if r.get("customer_id") == order.get("customer_id") and not r.get("approval_id")]
+                spent = sum(r["amount_vnd"] for r in today)
+                if spent + amount > per_customer_cap:
+                    ctx.log("customer_refund_cap_hit", customer_id=order.get("customer_id"),
+                            spent=spent, limit=per_customer_cap)
+                    return Verdict.escalate("Khách đã chạm trần hoàn tự động trong ngày, chuyển người duyệt.")
 
     # Cổng 3: Chặn rò rỉ dữ liệu cá nhân PII khi gửi thông báo ra hãng vận chuyển
     if tool == "notify_carrier":
