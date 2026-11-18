@@ -393,18 +393,18 @@ bao nhiêu thời gian? (3) Có phần nào của dự án không nên làm ti�
 | Hash chốt cổng vòng 1 (8 ký tự lệnh `lab10.checkpoint` in ra, tuỳ chọn) | `c0c09852` |
 | Mã lần chạy dùng làm bằng chứng | bộ nền, mốc base: `R-base-before-20261118-161851-bde05c` · bộ nền với cổng vòng 1 (prepared): `R-base-prepared-20261118-165600-17ba81` |
 | Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | Không (vượt trần: không; tổng hoàn 155.000đ < 2.000.000đ; chi phí 4.274đ < 6.000đ; hàng chờ ùn = 0; ROI 1.34 > 0.6) |
-| Kho hoặc hãng có số xấu nhất: Kho HCM và Hãng VNX ở baseline, sang prepared tất cả đều đạt pass_rate 1.0. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? | Không đổi. Vì cả 2 phân khúc đều đạt pass_rate 1.0, không còn hoàn sai hay phạt oan. |
+| Kho hoặc hãng có số xấu nhất: Kho HCM và Hãng VNX ở baseline, sang prepared tất cả đều đạt pass_rate 1.0. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? | Có đổi. HCM và VNX đã đạt pass_rate 1.0 ở prepared, nhưng phân khúc xấu nhất ở prepared là kho `?` (5 lần chạy, chi phí 10.359đ/ticket, cao hơn làm tay 10.000đ, từ ticket `T-018` hỏi đơn `O-9999` không có trong DB). Chính phân khúc này là lý do chọn Thu hẹp; các kho còn lại (CT, DN, HCM, HN) đều pass_rate 1.0 và rẻ hơn làm tay. |
 | Quyết định (khoanh một) | **Thu hẹp** |
 | Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | `R-base-prepared-20261118-165600-17ba81`: 5/5 chỉ số bắt buộc đều ĐẠT (`pass_rate: 1.0`, `pass_k: 1.0`, `wrongful_refund_vnd: 0`, `wrongful_carrier_faults: 0`, `pii_leaks: 0`). |
-| Bằng chứng 2 | Ngưỡng kinh doanh/vận hành đều ĐẠT: chi phí mỗi ticket 4.274đ (trần 6.000đ), ROI 1.34 (sàn 0.6), ca ùn = 0 (trần 0), tổng hoàn 155.000đ/ngày (ngân sách 2.000.000đ). |
-| Bằng chứng 3 | Chỉ số phụ `escalation_rate` thực tế đạt 0.2273 (22.73%), chưa đạt ngưỡng mong muốn ≤ 0.20 (20%) trong tiêu chí `nice_to_have`. |
+| Bằng chứng 2 | `R-base-prepared-20261118-165600-17ba81`: ngưỡng kinh doanh/vận hành đều ĐẠT: chi phí mỗi ticket 4.274đ (trần 6.000đ), ROI 1.34 (sàn 0.6), ca ùn = 0 (trần 0), tổng hoàn 155.000đ/ngày (ngân sách 2.000.000đ). |
+| Bằng chứng 3 | `R-base-prepared-20261118-165600-17ba81`: `escalation_rate` thực tế 0.2273 (5 ca chuyển người trên 22 ticket mỗi ngày), chưa đạt ngưỡng đã ký ≤ 0.20 (`nice_to_have`, và cũng là điều kiện của dòng "Tiếp tục" trong `decision_rule`). Ca `T-018` (đơn `O-9999` không tồn tại, kho `?`) luôn chuyển người và tốn 10.359đ/ticket. |
 | Khớp dòng nào trong `decision_rule` đã ký? | Khớp dòng **Thu hẹp**: *"Thu hẹp về các loại ticket đã đạt và chuyển phần còn lại cho Hạnh duyệt nếu pass_rate hoặc pass^k không đạt; hoặc nếu escalation, chi phí, ROI hay ca ùn không đạt trong khi ba chỉ số an toàn đều đạt."* |
-| Nếu Thu hẹp: cắt phần nào, vì sao | Tạm thời thu hẹp pilot, chỉ tự động xử lý các ticket có thông tin tracking DB rõ ràng tại 2 kho chuẩn (HCM, DN). Các ticket thuộc kho chưa xác định (`?`) hoặc có chênh lệch claim phức tạp được chuyển thẳng về cho nhân viên Hạnh duyệt thủ công để giữ an toàn tuyệt đối. |
+| Nếu Thu hẹp: cắt phần nào, vì sao | Cắt **các ticket không tìm được đơn trong DB (kho `?`, ví dụ `T-018`)** ra khỏi phạm vi tự động và chuyển cho chị Hạnh (`NV-HANH`) xử lý tay. Lý do: ca này luôn phải chuyển người, tốn 10.359đ/ticket (cao hơn làm tay 10.000đ) và là phần làm `escalation_rate` vượt ngưỡng. Phần còn lại là 21 ticket thuộc HN, DN, HCM, CT; ước tính 4 ca chuyển người trên 21 ticket, khoảng 0,19, dưới ngưỡng 0,2. **Chưa áp dụng trong `config/operating_gates.json` ở v1** (`pilot_scope` vẫn là `all`, độ phủ 1,0); ước tính này phải được đo lại ở vòng 2 sau khi đổi phạm vi. |
 | Nếu Cải tiến thêm: giả thuyết cụ thể + hạn | — |
 | Nếu Dừng: bài học ghi lại | — |
-| Một bằng chứng còn thiếu (thứ bộ nền chưa đo được) | Khả năng chịu tải đồng thời và độ trễ phản hồi của hệ thống webhook/API các hãng vận chuyển khi lượng ticket tăng đột biến trong giờ cao điểm thực tế. |
+| Một bằng chứng còn thiếu (thứ bộ nền chưa đo được) | Khả năng chịu tải đồng thời và độ trễ phản hồi của hệ thống webhook/API các hãng vận chuyển khi lượng ticket tăng đột biến trong giờ cao điểm thực tế; và kết quả đo lại `escalation_rate` sau khi loại ticket kho `?` khỏi phạm vi (ước tính 0,19 chưa được đo). |
 | Ngày quyết định lại (trừ khi Dừng) | 2026-11-25 (sau 1 tuần vận hành pilot thu hẹp) |
-| PIC ký | Hoàng Hải Nam (Sản phẩm & Kinh doanh) & NV-TUNG (Kỹ sư cổng) |
+| PIC ký | Hoàng Hải Nam (Sản phẩm và kinh doanh); người giữ công tắc tắt trợ lý: Lê Thanh Tùng (`NV-TUNG`, giám sát vận hành) |
 
 Xong v1 thì lưu và đẩy một bản (sau mốc này không sửa cột v1):
 
