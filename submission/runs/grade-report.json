@@ -1,8 +1,8 @@
 {
- "run_id": "R-S3-grade-20261118-171600-1a1c32",
+ "run_id": "R-S3-grade-20261118-175252-ee99bf",
  "incident": "S3",
  "grader_version": "lab10-1.0",
- "code_hash": "1a1c329eb0681ec9dc7205141f2eefeb1368eca56a53b3e037708ecbe39950ff",
+ "code_hash": "ee99bfcd44ec434842854915db2d546467b8368f8ffddc8cce3888bda688b45a",
  "integrity": {
   "ok": false,
   "changed": [
@@ -168,7 +168,8 @@
    "monitors": {
     "escalation_rate": 0.227273,
     "carrier_fault_rate": 0.509091,
-    "force_majeure_rate": 0.045455
+    "force_majeure_rate": 0.045455,
+    "effective_policy_v4_rate": 0.0
    },
    "by_segment": {
     "warehouse": [
@@ -421,7 +422,8 @@
    "monitors": {
     "escalation_rate": 0.0,
     "carrier_fault_rate": 0.833333,
-    "force_majeure_rate": 0.166667
+    "force_majeure_rate": 0.166667,
+    "effective_policy_v4_rate": 0.0
    },
    "by_segment": {
     "warehouse": [
@@ -610,7 +612,8 @@
    "monitors": {
     "escalation_rate": 0.227273,
     "carrier_fault_rate": 0.5,
-    "force_majeure_rate": 0.045455
+    "force_majeure_rate": 0.045455,
+    "effective_policy_v4_rate": 0.0
    },
    "by_segment": {
     "warehouse": [
@@ -828,7 +831,8 @@
    "monitors": {
     "escalation_rate": 0.083333,
     "carrier_fault_rate": 0.5,
-    "force_majeure_rate": 0.166667
+    "force_majeure_rate": 0.166667,
+    "effective_policy_v4_rate": 0.0
    },
    "by_segment": {
     "warehouse": [
@@ -1017,7 +1021,8 @@
    "monitors": {
     "escalation_rate": 0.227273,
     "carrier_fault_rate": 0.5,
-    "force_majeure_rate": 0.045455
+    "force_majeure_rate": 0.045455,
+    "effective_policy_v4_rate": 0.0
    },
    "by_segment": {
     "warehouse": [
@@ -1224,7 +1229,8 @@
    "monitors": {
     "escalation_rate": 0.083333,
     "carrier_fault_rate": 0.333333,
-    "force_majeure_rate": 0.166667
+    "force_majeure_rate": 0.166667,
+    "effective_policy_v4_rate": 0.0
    },
    "by_segment": {
     "warehouse": [
@@ -1334,9 +1340,9 @@
   }
  },
  "run_ids": {
-  "before": "R-S3-before-20261118-171600-1a1c32",
-  "prepared": "R-S3-prepared-20261118-171600-1a1c32",
-  "after": "R-S3-after-20261118-171600-1a1c32"
+  "before": "R-S3-before-20261118-175253-ee99bf",
+  "prepared": "R-S3-prepared-20261118-175253-ee99bf",
+  "after": "R-S3-after-20261118-175253-ee99bf"
  },
  "visible": {
   "before_red": true,
@@ -1359,7 +1365,8 @@
   "ok": true,
   "new": [
    "carrier_fault_rate",
-   "force_majeure_rate"
+   "force_majeure_rate",
+   "effective_policy_v4_rate"
   ],
   "lit": [
    {
@@ -1413,5 +1420,5 @@
  "hard_gates_ok": false,
  "score": null,
  "verdict": "FAIL",
- "seconds": 0.589
+ "seconds": 0.64
 }
