@@ -24,8 +24,8 @@ rồi mới chạy đánh giá. Khối 1 không sửa code.
 
 ### Câu 1.2 · Mục tiêu nhìn từ hai người
 
-- Chị Oanh, kế toán đối soát (không dùng trợ lý, nhưng phải khớp sổ với hãng và shop mỗi tuần): …
-- Chị Hạnh, trưởng ca CSKH (phải duyệt những ca trợ lý chuyển sang): …
+- Chị Oanh, kế toán đối soát (không dùng trợ lý, nhưng phải khớp sổ với hãng và shop mỗi tuần): Mọi dòng hoàn tiền trong sổ cái (`ledger`) và dòng ghi lỗi hãng (`faults`) do trợ lý tạo ra đều đúng bên chịu chi phí (`payer` là LogiX hay shop), đúng lỗi hãng theo nguyên nhân thực tế (`delay_cause` trong tracking) và khớp số tiền đã báo cho khách (`send_reply`), để cuối tuần đối soát với shop và các hãng vận chuyển không bị lệch sổ, trừ oan tiền shop hay phạt oan hãng.
+- Chị Hạnh, trưởng ca CSKH (phải duyệt những ca trợ lý chuyển sang): Chỉ chuyển cho trưởng ca các ca thực sự vượt hạn mức tự động hoặc có rủi ro, kèm ghi chú giải thích đầy đủ và dùng mã phê duyệt `NV-HANH` hợp lệ, để hàng chờ duyệt không bị ùn quá SLA 60 phút (trong công suất 6 ca/giờ/người) và không phát sinh khoản hoàn mang tên duyệt sai/hết hạn của chị.
 
 ---
 
@@ -71,9 +71,9 @@ nhau chia cho số lần chạy có sự kiện `proposal`; lần chạy không 
 
 ### Câu 1.5 · Chọn MỘT kết luận và giải thích một câu
 
-Số minh hoạ trong đề (không phải số của bàn). Khoanh: **(b)**
+Số minh hoạ trong đề (không phải số của bàn). Khoanh: **(a) · (b) · (c) · (d)**
 
-Giải thích một câu: Y chỉ hơn X đúng 1 trong 50 lần chạy, và pass_rate 1,0 của Y vẫn nằm trong khoảng tin cậy 95% [0,94; 1,0] của X, nên chênh lệch này có thể chỉ do may rủi và chưa đủ căn cứ để kết luận Y tốt hơn X.
+Giải thích một câu: …
 
 ---
 
