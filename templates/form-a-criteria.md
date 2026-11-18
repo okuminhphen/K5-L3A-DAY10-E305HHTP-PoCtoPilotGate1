@@ -48,12 +48,12 @@ trợ lý có đang gây thiệt hại cho bên ngoài LogiX không; không có 
 
 | | Offline, cho MỘT bước (câu 1.3) | Telemetry production (câu 1.4) |
 |---|---|---|
-| **Bước / hành vi được đo** | | Bước gửi thông báo ra bên thứ ba qua `notify_carrier` (đích `carrier:<carrier_id>`). |
-| **Thước đo** (một câu, có đơn vị) | | Tỉ lệ phần trăm (%) và số lượng thông báo gửi hãng vận chuyển có chứa ít nhất một trường dữ liệu cá nhân (tên, số điện thoại, địa chỉ đường của người nhận) trong payload. |
-| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | Toàn bộ tin nhắn `outbound` có đích `carrier:*` trong production đối chiếu tự động với trường `recipient` (`name`, `phone`, `street`) của đơn hàng tương ứng trong DB `orders` (và so với `carrier_notice_fields` trong `policies`); không cần gán nhãn thủ công. |
-| **Cách tính** (công thức, mẫu số, ca thiếu dữ liệu) | | `(Số tin notify_carrier có payload khớp tên, 9 số cuối SĐT hoặc địa chỉ đường của recipient) / (Tổng số tin notify_carrier gửi đi trong kỳ) × 100%`. Nếu không có tin gửi hãng trong kỳ (mẫu số = 0) thì ghi nhận `0` ca vi phạm và đếm riêng kỳ không phát sinh; ca thiếu `order_id` giữ lại đếm riêng để kiểm tra. |
-| **Khung thời gian / ngưỡng báo động** | (không áp dụng) | Kiểm tra theo thời gian thực và tổng hợp mỗi 1 giờ (trên ca trực 480 phút). Ngưỡng báo động: `>= 1` tin vi phạm (`> 0`) lập tức cảnh báo Giám sát vận hành (`NV-TUNG`) tắt công tắc `notify_carrier`. |
-| **Điểm mù** (thước đo này KHÔNG thấy gì) | | Không phát hiện được lỗi ghi oan phạt tiền hãng (`file_carrier_fault`), trừ oan tiền shop (`payer = MERCHANT`), hay gửi nhầm thông tin nhạy cảm sang khách đặt đơn với đơn quà tặng (`is_gift: true`). |
+| **Bước / hành vi được đo** | | |
+| **Thước đo** (một câu, có đơn vị) | | |
+| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | | |
+| **Khung thời gian / ngưỡng báo động** | (không áp dụng) | |
+| **Điểm mù** (thước đo này KHÔNG thấy gì) | | |
 
 **Ví dụ mẫu (bước "chọn độ trễ" của agent, đừng chép):**
 Thước đo: tỉ lệ lần chạy mà độ trễ agent dùng để tính tiền khác độ trễ theo tracking DB. Dữ liệu: sự kiện `proposal.delay_days_used`
