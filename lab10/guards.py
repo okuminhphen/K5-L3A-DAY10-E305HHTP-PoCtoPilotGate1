@@ -34,9 +34,56 @@ from .tools import Verdict
 
 
 def pre_guard(ctx):
+    # Ghim phiên bản chính sách hiệu lực tại ngày ctx.as_of
+    policies = ctx.tools.lookup_policies()
+    policy = H.effective_policy(policies, ctx.as_of)
+    if policy:
+        return Verdict.allow(policy_id=policy["policy_id"])
     return Verdict.allow()
 
 
 def write_gate(ctx, action):
     # action = {"tool": "issue_refund", "ticket_id":..., "order_id":..., "amount_vnd":..., "payer":..., ...}
+    tool = action.get("tool")
+
+    order = ctx.tools.lookup_order(action.get("order_id"))
+    if not order:
+        return Verdict.allow()
+
+    policies = ctx.tools.lookup_policies()
+    policy = H.effective_policy(policies, ctx.as_of)
+    if not policy:
+        return Verdict.allow()
+
+    parcel = H.ticket_parcel(order, ctx.ticket, ctx.as_of)
+    delay_days = H.db_delay_days(parcel, ctx.as_of)
+    cause = parcel.get("delay_cause")
+
+    # Cổng 1: Chống ghi lỗi oan cho hãng vận chuyển (bảo vệ đối tác và chị Oanh đối soát)
+    if tool == "file_carrier_fault":
+        if not H.carrier_at_fault(policy, parcel, delay_days):
+            return Verdict.deny("Hãng vận chuyển không có lỗi theo tracking DB và chính sách hiệu lực")
+        if action.get("delay_days") != delay_days:
+            return Verdict.modify("Sửa số ngày trễ về đúng dữ liệu tracking DB", delay_days=delay_days)
+
+    # Cổng 2: Chống hoàn sai tiền / hoàn vượt mức chính sách (khắc phục T-002@55 model override)
+    if tool == "issue_refund":
+        # Chặn hoàn trùng 2 lần cho cùng một ticket (phòng trường hợp write_retry)
+        existing = ctx.tools.ledger_rows(ticket_id=action.get("ticket_id"))
+        if existing:
+            return Verdict.deny("Đã hoàn tiền cho ticket này rồi, chặn hoàn trùng")
+
+        entitled = H.entitlement_vnd(policy, order, delay_days, cause)
+        if entitled <= 0:
+            return Verdict.deny("Đơn hàng không đủ điều kiện hoàn tiền theo tracking DB")
+        if action.get("amount_vnd", 0) > entitled:
+            return Verdict.modify("Chỉnh số tiền hoàn về đúng mức quyền lợi theo chính sách", amount_vnd=entitled)
+
+    # Cổng 3: Chặn rò rỉ dữ liệu cá nhân PII khi gửi thông báo ra hãng vận chuyển
+    if tool == "notify_carrier":
+        payload = action.get("payload") or {}
+        if "recipient_contact" in payload:
+            return Verdict.modify("Xoá thông tin liên hệ cá nhân PII trước khi gửi bên thứ ba",
+                                  payload={k: v for k, v in payload.items() if k != "recipient_contact"})
+
     return Verdict.allow()
