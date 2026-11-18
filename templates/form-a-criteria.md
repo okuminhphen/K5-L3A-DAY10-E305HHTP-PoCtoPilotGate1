@@ -48,12 +48,12 @@ trợ lý có đang gây thiệt hại cho bên ngoài LogiX không; không có 
 
 | | Offline, cho MỘT bước (câu 1.3) | Telemetry production (câu 1.4) |
 |---|---|---|
-| **Bước / hành vi được đo** | | |
-| **Thước đo** (một câu, có đơn vị) | | |
-| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | |
-| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | | |
-| **Khung thời gian / ngưỡng báo động** | (không áp dụng) | |
-| **Điểm mù** (thước đo này KHÔNG thấy gì) | | |
+| **Bước / hành vi được đo** | Bước quyết định ghi lỗi cho hãng vận chuyển (`file_carrier_fault`). | Bước gửi thông báo ra bên thứ ba qua `notify_carrier` (đích `carrier:<carrier_id>`). |
+| **Thước đo** (một câu, có đơn vị) | Tỉ lệ ghi lỗi oan cho hãng vận chuyển (đơn vị: %). | Tỉ lệ phần trăm (%) và số lượng thông báo gửi hãng vận chuyển có chứa ít nhất một trường dữ liệu cá nhân (tên, số điện thoại, địa chỉ đường của người nhận) trong payload. |
+| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | Sự kiện gọi tool `file_carrier_fault` trong trace log (`runs/<mã>/traces/`) đối chiếu với trường `exception_cause` của kiện hàng trong `data/world.json` (`orders[].parcels`), trên 22 ticket × 5 seed (110 lượt chạy). Nhãn đúng/sai do hàm sự thật `H.carrier_at_fault` xác định (hãng không có lỗi nếu do thời tiết/thiên tai hoặc lỗi từ người gửi). | Toàn bộ tin nhắn `outbound` có đích `carrier:*` trong production đối chiếu tự động với trường `recipient` (`name`, `phone`, `street`) của đơn hàng tương ứng trong DB `orders` (và so với `carrier_notice_fields` trong `policies`); không cần gán nhãn thủ công. |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | Số lượt chạy gọi `file_carrier_fault` mà `carrier_at_fault == False` chia cho tổng số lượt chạy có phát sinh lệnh `file_carrier_fault` nhân 100%. Các lượt chạy bị dừng sớm (escalate) hoặc từ chối trước bước ghi lỗi không tính vào mẫu số; nếu mẫu số bằng 0 thì gán 0%. | `(Số tin notify_carrier có payload khớp tên, 9 số cuối SĐT hoặc địa chỉ đường của recipient) / (Tổng số tin notify_carrier gửi đi trong kỳ) × 100%`. Nếu không có tin gửi hãng trong kỳ (mẫu số = 0) thì ghi nhận `0` ca vi phạm và đếm riêng kỳ không phát sinh; ca thiếu `order_id` giữ lại đếm riêng để kiểm tra. |
+| **Khung thời gian / ngưỡng báo động** | (không áp dụng) | Kiểm tra theo thời gian thực và tổng hợp mỗi 1 giờ (trên ca trực 480 phút). Ngưỡng báo động: `>= 1` tin vi phạm (`> 0`) lập tức cảnh báo Giám sát vận hành (`NV-TUNG`) tắt công tắc `notify_carrier`. |
+| **Điểm mù** (thước đo này KHÔNG thấy gì) | Không phát hiện được ca hãng có lỗi thật nhưng trợ lý bỏ sót không ghi lỗi (false negative), và không phát hiện được trường hợp thông tin nguyên nhân trễ trong Tracking DB bị sai lệch từ đầu. | Không phát hiện được lỗi ghi oan phạt tiền hãng (`file_carrier_fault`), trừ oan tiền shop (`payer = MERCHANT`), hay gửi nhầm thông tin nhạy cảm sang khách đặt đơn với đơn quà tặng (`is_gift: true`). |
 
 **Ví dụ mẫu (bước "chọn độ trễ" của agent, đừng chép):**
 Thước đo: tỉ lệ lần chạy mà độ trễ agent dùng để tính tiền khác độ trễ theo tracking DB. Dữ liệu: sự kiện `proposal.delay_days_used`
@@ -71,9 +71,9 @@ nhau chia cho số lần chạy có sự kiện `proposal`; lần chạy không 
 
 ### Câu 1.5 · Chọn MỘT kết luận và giải thích một câu
 
-Số minh hoạ trong đề (không phải số của bàn). Khoanh: **(a) · (b) · (c) · (d)**
+Số minh hoạ trong đề (không phải số của bàn). Khoanh: **(b)**
 
-Giải thích một câu: …
+Giải thích một câu: Y chỉ hơn X đúng 1 trong 50 lần chạy, và pass_rate 1,0 của Y vẫn nằm trong khoảng tin cậy 95% [0,94; 1,0] của X, nên chênh lệch này có thể chỉ do may rủi và chưa đủ căn cứ để kết luận Y tốt hơn X.
 
 ---
 
