@@ -154,7 +154,7 @@ sự thật về ngày giao · lệch khi điểm phát quét sót hoặc nhập
 
 ## B4 · Câu 2.4 · HAZOP vòng 1 trên tool của agent
 
-Tool phân tích: `file_carrier_fault`. WRONG: `delay_cause` không phải CARRIER nhưng model ghi lỗi → hãng chịu phạt; gate đọc tracking và chỉ cho ghi khi cause=CARRIER. INVALID: index policy cũ sau ngày hiệu lực → hoàn/lỗi sai; `pre_guard` pin policy theo `as_of`. INCOMPLETE: thiếu `delay_cause` → không đủ chứng cứ; chặn và chuyển duyệt. Nhánh chưa thấy trực tiếp: một hãng có nhiều lỗi trong ngày; trần `max_auto_strikes_per_carrier_per_day=2` giới hạn thiệt hại. Ngoài code, một người duyệt chỉ xử lý 6 ca/giờ nên theo dõi hàng chờ và gọi/tắt theo runbook.
+Phạm vi HAZOP là lệnh ghi lỗi hãng. Bảng dưới ghi nguyên nhân, người chịu hậu quả và cổng tương ứng.
 
 *Chỉ làm MỘT vòng, trên MỘT tool. Đây là HAZOP vòng 1; HAZOP của thẻ sự cố viết riêng ở Phiếu C mục C4, không ghi đè bảng này.*
 
@@ -196,7 +196,7 @@ Tool chọn phân tích: `file_carrier_fault` · Người viết: Lê Minh Phụ
 
 ## B5 · Câu 2.4 · Checklist go-live 9 nhóm việc, lần 1
 
-Kết quả lần 1: Chất lượng, dữ liệu, quyền hạn, chi phí và vận hành **Xong** theo checkpoint `146cff5c` và report prepared; bảo mật/pháp lý **Xong có điều kiện** (chặn `name`, `phone`, `street`, `customer_note`; lỗi hãng cần nguyên nhân tracking); hiệu năng **Chưa** vì chưa có tải thật; quyết định **Chưa ký lại** do hash tiêu chí ký không khớp file hiện hành. PIC: Hoàng Hải Nam (chất lượng/chi phí), Phạm Thanh Tùng (dữ liệu/quyết định), Nguyễn Cảnh Hiếu (quyền hạn/hạ tầng), Lê Minh Phụng (vận hành/pháp lý).
+Đối chiếu theo bản chốt `c0c09852` và report bộ nền prepared `R-base-prepared-20261118-165600-17ba81`. Checklist ghi bằng chứng trong mô phỏng. Tải thật và tỉ lệ chuyển người ngoài mô phỏng cần đo lại trước khi mở rộng.
 
 Checklist chín nhóm việc phải xong trước khi chạy thử thật. Bàn điền lần đầu ở đây, rồi cập nhật sau sự cố ở Phiếu C mục C11.
 Cột "Bằng chứng lấy từ đâu" trỏ tới mục bàn đã điền ở bước khác; không điền thêm phiếu nào chỉ để lấp cột này.
@@ -344,7 +344,7 @@ Mỗi dòng một tín hiệu. Cột "Lấy ở đâu" phải là một dòng tr
 | Tổng tiền hoàn tự động trong ngày so với trần | Dòng `tổng hoàn tự động một ngày` trong `lab10.eval` / `lab10.grade` (`refund.auto_refund_day_max_vnd`) | `≤ 800.000đ` (`≤ 80%` trần bàn đặt `1.000.000đ`) | `800.001đ–1.000.000đ` → báo kế toán `NV-OANH` và `NV-HANH` theo dõi sát | `> 1.000.000đ` (vượt `daily_refund_cap_vnd = 1.000.000đ`) hoặc `> 2.000.000đ` (ngân sách Finance) → chuyển toàn bộ khoản hoàn mới sang `NV-HANH` duyệt | Trần Thị Hạnh (`NV-HANH`) |
 | Tiền hoàn sai | Dòng `wrongful_refund_vnd` trong `lab10.eval` / `lab10.grade` | `0đ` | Không có ngưỡng vàng (tiêu chí ký `wrongful_refund_vnd_max = 0`) | `> 0đ` → tắt `issue_refund` trong `config/switches.json` (chuyển hết cho người xử lý), thông báo `NV-OANH` | Lê Thanh Tùng (`NV-TUNG`) |
 | Lỗi ghi oan cho hãng / lộ dữ liệu cá nhân (pháp lý) | Dòng `wrongful_carrier_faults` và `pii_leaks` trong `lab10.eval` / `lab10.grade` | `0 lỗi hãng oan · 0 ca lộ PII` | Không có ngưỡng vàng (tiêu chí ký đều `= 0`) | `wrongful_carrier_faults > 0` → tắt `file_carrier_fault`; `pii_leaks > 0` → tắt ngay `notify_carrier` trong `config/switches.json` | Lê Thanh Tùng (`NV-TUNG`) |
-| Tỉ lệ chuyển người duyệt (tín hiệu riêng của bàn) | Dòng `escalation_rate` / `monitors['escalation_rate']` trong `lab10/monitors.py` | `≤ 0,18` | `0,18–0,20` → kiểm tra nhóm ticket/kho khiến chuyển người tăng bất thường | `> 0,20` (vượt `escalation_rate_max = 0,2` đã ký) → tăng người trực duyệt hoặc thu hẹp `business.pilot_scope` | Lê Thanh Tùng (`NV-TUNG`) |
+| Tỉ lệ chuyển người duyệt (tín hiệu riêng của bàn) | Dòng `escalation_rate` / `monitors['escalation_rate']` trong `lab10/monitors.py` | `≤ 0,18` | `> 0,18 đến 0,20` → kiểm tra nhóm ticket/kho khiến chuyển người tăng bất thường | `> 0,20` (vượt `escalation_rate_max = 0,2` đã ký) → tăng người trực duyệt hoặc thu hẹp `business.pilot_scope` | Lê Thanh Tùng (`NV-TUNG`) |
 
 #### Runbook 3 · Điều kiện dừng và cách dừng
 
@@ -376,7 +376,7 @@ Lượng ticket có thể dồn gấp ba trong một giờ (ngày sale, sau bão
 
 ## B8 · Chốt cổng vòng 1 và quyết định Gate 1 · v1 (phút 105–115)
 
-Mốc cổng vòng 1: hash `146cff5c`; evidence prepared `R-S3-prepared-20261118-174133-7c0e64`. Không còn vượt trần kỹ thuật/kinh doanh ở prepared, nhưng bằng chứng tải thật và tính toàn vẹn hash tiêu chí còn thiếu. Quyết định v1: **Cải tiến thêm** — giữ cổng, đo thêm dữ liệu thật trước khi cho Tiếp tục; PIC vận hành: Lê Minh Phụng.
+Bản chốt vòng 1 `c0c09852`. Quyết định chính thức ở bảng v1 bên dưới. `escalation_rate` prepared là 22,73%, cao hơn 20%, nên v1 chọn **Thu hẹp**.
 
 Làm đúng thứ tự:
 

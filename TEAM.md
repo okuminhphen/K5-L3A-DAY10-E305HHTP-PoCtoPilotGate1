@@ -2,7 +2,7 @@
 
 ## Thông tin nhóm
 
-- Tên nhóm (`TenNhom`, không dấu, không khoảng trắng):
+- Tên nhóm (`TenNhom`, không dấu, không khoảng trắng): `E305HHTP`
 - Lớp: `L3A`
 - Repo của bàn: `K5-L3A-DAY10-E305HHTP-PoCtoPilotGate1`
 - Thẻ sự cố đã bốc (S1–S8): S3
@@ -49,3 +49,52 @@ Vai **Sản phẩm và kinh doanh**. Phiếu A: câu 1.1, 1.5 và câu 1.6 (5 ch
 ### Exit ticket
 
 Học được: ngưỡng phải ký trước khi xem số, và dòng "được phép cân nhắc Tiếp tục" của report không tính `escalation_rate`, nên phải đối chiếu thêm `decision_rule` đã ký. Còn chưa chắc: hash tiêu chí được tính trên bản CRLF của máy Windows trong khi bản trên GitHub là LF, nên máy chấm có thể báo lệch (đã báo Lab Coach chưa thì cần xác nhận); và việc cắt kho DN chỉ dựa trên mẫu 5 ticket mỗi ngày.
+
+## LeMinhPhung-2A202603693
+
+### Phần việc phụ trách
+
+Vận hành và pháp lý. Phiếu B mục B4–B5, B7.5–B7.6. Phiếu C mục C7–C11 và đối chiếu hồ sơ CP5.
+
+### Đóng góp cụ thể
+
+- Rà HAZOP lệnh ghi lỗi hãng, kiểm checklist 9 nhóm việc, viết runbook cho người trực và quy tắc dừng khi có lỗi hãng oan hoặc PII. Đối chiếu bản chốt có một người trực, 6 ca/giờ và SLA 60 phút.
+- Phần S3 phụ trách rà trần số lỗi tự động theo hãng, xem tác động tới người duyệt và đối tác, cập nhật risk register và runbook 4–5. Trong phạm vi nộp, S3 đạt 50/50 lượt và 0 lỗi hãng oan. Kiểm riêng đủ 60 lượt để xác nhận cổng vẫn xử lý đúng khi không cắt DN.
+- Dùng Codex (AI) để đọc đề và code, soạn thảo Phiếu B và C, hỗ trợ sửa guard và monitor CP4, chạy lệnh đo, đối chiếu tiêu chí, chuẩn bị hồ sơ và kịch bản demo CP5. Số liệu lấy từ report và trace của lab.
+
+### Bằng chứng
+
+- `df2620e`: Phiếu B, phần vận hành và pháp lý. `c9494c6`: kiểm đúng kiện, đọc trần Ops, monitor chạm trần và hồ sơ CP4.
+- `R-S3-grade-20261118-193511-540e01` và `R-base-after-20261118-193510-540e01`. Ca ngoài S3 `ADHOC-1@11`: thông báo hãng giảm lộ PII từ 1 xuống 0, vẫn hoàn 25.000đ. Chi tiết tại `submission/evidence/cp5-validation.json`.
+
+### Exit ticket
+
+Gợi ý để Phụng xác nhận. Điều học được: chặn riêng lệnh ghi lỗi giúp bảo vệ hãng trong khi khách vẫn nhận khoản hoàn hợp lệ. Điều còn chưa chắc: khi hai lệnh đến đồng thời và cùng đọc sổ lỗi cũ, cổng có giữ được trần hai lỗi hay không. Bài mô phỏng chạy tuần tự nên cần đo việc này lúc pilot.
+
+## PhamThanhTung-2A202603695
+
+### Phần việc phụ trách
+
+Sản phẩm và kinh doanh. PIC chi phí theo Phiếu B mục B5 và Phiếu C mục C11.
+
+### Đóng góp cụ thể và bằng chứng
+
+Theo hồ sơ của bàn, phần kinh doanh cần đối chiếu chi phí/ticket, ROI, ngân sách LLM và trần hoàn với tiêu chí ký. Xem Phiếu A mục A4 (phần SP-2), Phiếu B mục B7.4 và Phiếu C mục C11. Kết quả bộ nền thu hẹp 4.165đ/ticket, ROI 1,40, trong lần chạy `R-base-after-20261118-193510-540e01`.
+
+### Exit ticket
+
+Gợi ý để Phạm Thanh Tùng xác nhận. Điều học được: chi phí chung đạt ngưỡng vẫn có thể che mất phân khúc đắt hơn làm tay. Điều còn chưa chắc: mức tiết kiệm sau khi chuyển ca DN sang tay sẽ giữ được bao lâu khi số ticket thay đổi. Bổ sung việc đã trực tiếp làm và phần có dùng AI nếu có.
+
+## NguyenCanhHieu-2A202603667
+
+### Phần việc phụ trách
+
+Kỹ sư cổng. PIC chất lượng theo Phiếu B mục B5 và Phiếu C mục C11.
+
+### Đóng góp cụ thể và bằng chứng
+
+Phần kiểm cổng và chất lượng gồm bản chốt vòng 1 `c0c09852`, kiểm hồi quy và report ba mốc. Đối chiếu commit `05a724f` (chốt vòng 1), `1b4448d` (cập nhật hồ sơ) và lần chạy `R-S3-grade-20261118-193511-540e01`.
+
+### Exit ticket
+
+Gợi ý để Nguyễn Cảnh Hiếu xác nhận. Điều học được: chạy đủ phạm vi và chạy phạm vi thu hẹp giúp tách tác dụng của cổng khỏi tác dụng của việc bỏ ticket. Điều còn chưa chắc: bài kiểm tra ẩn và tải đồng thời sẽ phát hiện nhánh nào mà bộ nhìn thấy chưa phủ. Bổ sung việc đã trực tiếp làm và phần có dùng AI nếu có.

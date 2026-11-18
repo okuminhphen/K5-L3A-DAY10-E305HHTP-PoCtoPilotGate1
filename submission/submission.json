@@ -12,6 +12,6 @@
   "three_lines": {
     "environment_assumption": "Tracking luôn có `delay_cause` đúng và kịp thời trước khi LogiX xử lý yêu cầu hoàn, kể cả khi bão làm chậm việc cập nhật; ngay trong dữ liệu đã có 5/26 kiện trống nguyên nhân (và O-2320, O-2321 trong gói S3), và tracking còn trả mặc định `CARRIER` khi trống.",
     "reduce_or_prevent": "Với các nhánh đã biết (kiện thiếu nguyên nhân, chính sách sai phiên bản, từ lỗi hãng thứ 3 trong ngày) cổng `write_gate` NGĂN được trong mô phỏng tuần tự vì lệnh ghi bị chặn bằng nguồn sự thật, không phụ thuộc model (lỗi hãng oan 35 xuống 0). Nhưng chỉ GIẢM khả năng ngoài thực tế: nhiều lệnh đến cùng lúc có thể cùng đọc sổ lỗi cũ và vượt trần, lọc PII che theo mẫu nên chữ viết cách khác vẫn có thể lọt, lệnh bị `deny` chưa tự chuyển cho người xác nhận, và nếu chính tracking ghi sai nguyên nhân thì cổng vẫn cho qua.",
-    "measure_in_pilot": "Tỉ lệ kiện trống `delay_cause` (hiện 5/26) và độ trễ cập nhật tracking, số lần chạm hoặc vượt trần khi xử lý đồng thời, và `escalation_rate` thật của từng kho sau 2026-12-01 khi REFUND-v4 giảm hạn mức tự động xuống 100.000đ (DN chỉ 5 ticket mỗi ngày nên 0,1765 chưa đáng tin)."
+    "measure_in_pilot": "Tỉ lệ kiện trống `delay_cause` (hiện 5/26) và độ trễ cập nhật tracking, số lần chạm hoặc vượt trần khi xử lý đồng thời, và `escalation_rate` thật của từng kho sau 2026-12-01 khi REFUND-v4 giảm hạn mức tự động xuống 100.000đ (DN chỉ 5 ticket mỗi ngày nên cần kiểm tra lại mức 0,1765 trên mẫu lớn hơn)."
   }
 }

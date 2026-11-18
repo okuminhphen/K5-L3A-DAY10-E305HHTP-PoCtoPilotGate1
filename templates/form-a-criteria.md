@@ -155,4 +155,6 @@ git add config/acceptance_criteria.json config/acceptance_criteria.lock && git c
 | Mã commit `Sign acceptance criteria` (7 ký tự đầu, `git log --oneline -1`) | c47fb3b |
 | Đã push lên `origin main` thành công? | có |
 
+**Đối chiếu lịch sử khi nộp:** `submission/runs/journal.jsonl` ghi lần đánh giá sớm nhất lúc 16:14:57 ngày 18/11/2026. Bản tiêu chí được ký lúc 16:32:33 và commit `c47fb3b` lúc 16:32:53. Bản tiêu chí hiện vẫn khớp chữ ký `7b9fcf2d`. Thứ tự ký trước khi đo cần Lab Coach xem xét dựa trên nhật ký gốc.
+
 Sau bước này **không sửa** `config/acceptance_criteria.json`, kể cả mở rồi lưu lại bằng trình soạn thảo tự định dạng.
