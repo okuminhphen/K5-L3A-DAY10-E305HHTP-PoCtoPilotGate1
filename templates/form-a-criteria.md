@@ -20,7 +20,7 @@ rồi mới chạy đánh giá. Khối 1 không sửa code.
 
 ### Câu 1.1 · Một mục tiêu cấp hệ thống (khác "model trả lời đúng")
 
-> …
+> Mọi khoản hoàn tiền và mọi lỗi ghi cho hãng đều có căn cứ trong tracking và chính sách đang hiệu lực, để khách được hoàn đúng và hãng không bị ghi oan; ca nào cần người duyệt thì được chuyển đúng lúc, trong hạn 60 phút, thay vì tự quyết sai.
 
 ### Câu 1.2 · Mục tiêu nhìn từ hai người
 
