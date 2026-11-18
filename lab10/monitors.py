@@ -19,7 +19,25 @@ def escalation_rate(trials):
     return sum(t["status"] == "escalated" for t in trials) / max(1, len(trials))
 
 
+def carrier_fault_rate(trials):
+    """Tỉ lệ ticket có ghi lỗi hãng vận chuyển (bắt sự cố phạt dồn dập đối tác)."""
+    return sum(len(t.get("faults", [])) for t in trials) / max(1, len(trials))
+
+
+def force_majeure_rate(trials):
+    """Tỉ lệ ticket liên quan đến sự kiện bất khả kháng / thiên tai bão lũ."""
+    count = 0
+    for t in trials:
+        for e in t.get("events", []):
+            if e.get("type") == "tracking" and e.get("cause") == "FORCE_MAJEURE":
+                count += 1
+                break
+    return count / max(1, len(trials))
+
+
 MONITORS = {
     "escalation_rate": escalation_rate,     # có sẵn; KHÔNG tính là metric mới của đội
+    "carrier_fault_rate": carrier_fault_rate,
+    "force_majeure_rate": force_majeure_rate,
 }
 STARTER_MONITORS = ("escalation_rate",)

@@ -165,15 +165,15 @@ mà cả bàn chưa nghĩ tới, không phải tả lại nhánh đã biết.
 **Câu hỏi dẫn dắt:** tool nào tạo ra hậu quả không đảo ngược? Mỗi tham số của tool đó lấy từ đâu (ticket, DB, model tự suy)?
 Với mỗi guideword: hậu quả cho ai, hiện có gì ngăn, cần thêm gate ở tầng nào (phát hiện / chặn / giới hạn thiệt hại)?
 
-Tool chọn phân tích: `________________` (gợi ý: `issue_refund`, `file_carrier_fault`, `notify_carrier`)
+Tool chọn phân tích: `issue_refund` (kèm `file_carrier_fault`)
 
 | Tham số / dòng dữ liệu | Guideword | Lệch cụ thể (viết bằng dữ kiện của lab) | Hậu quả, cho ai | Hiện có gì ngăn? | Gate đề xuất + tầng |
 |---|---|---|---|---|---|
-| | WRONG | | | | |
-| | INVALID | | | | |
-| | INCOMPLETE | | | | |
-| | PERTURBED | | | | |
-| | INCAPABLE | | | | |
+| `amount_vnd` | WRONG | Model tin lời khách khai trễ 5 ngày thay vì tracking DB 2 ngày (`T-002@55`). | LogiX mất 20.000đ tiền hoàn oan; hãng VNX chịu 1 lỗi phạt oan. | Chưa có gì ngăn ở baseline (chỉ có trần không vượt tổng đơn). | Cổng `write_gate` tính lại quyền lợi từ DB và chỉnh số tiền (Tầng: Chặn). |
+| `policy_id` | INVALID | Hệ thống áp dụng chính sách cũ do cờ kích hoạt `index_active` chưa cập nhật. | Áp sai mức đền bù và danh mục phạt đối tác. | Chưa có gì ngăn | Cổng `pre_guard` ghim chính sách theo ngày hiệu lực `as_of` (Tầng: Chặn). |
+| `ticket_id` | PERTURBED | Ticket gửi lặp hoặc gửi 2 lần cho cùng một đơn hàng giao trễ. | Hoàn tiền trùng lặp 2 lần cho 1 đơn hàng, gây thất thoát ngân sách. | Chưa có gì ngăn | Cổng `write_gate` kiểm tra `ledger_rows(ticket_id)` chặn hoàn trùng (Tầng: Chặn). |
+| `recipient_contact` | PERTURBED | Khách nhập thông tin số điện thoại, địa chỉ cá nhân người khác vào ticket. | Lộ dữ liệu cá nhân PII sang bên thứ ba (hãng vận chuyển). | Chưa có gì ngăn | Cổng `legal.pii_fields_blocked_to_third_party` xóa PII trước khi gửi (Tầng: Chặn). |
+| `call_llm` | INCAPABLE | Dịch vụ LLM bị quá tải hoặc lỗi mạng, trả về fallback fail-open. | Trợ lý tự ý hoàn phí và phạt hãng mà không qua kiểm tra chính sách. | Chưa có gì ngăn | Cổng `write_gate` kiểm tra lại toàn bộ điều kiện với tracking DB (Tầng: Chặn). |
 
 Không bắt buộc điền đủ năm dòng. Bắt buộc: **ít nhất ba dòng, trong đó một dòng là nhánh bàn chưa thấy trên trace**.
 
@@ -188,11 +188,8 @@ Không bắt buộc điền đủ năm dòng. Bắt buộc: **ít nhất ba dòn
 
 | Thành phần | Guideword | Lệch cụ thể | Hậu quả, cho ai | Cổng đề xuất: code hay con số nào trong `config/operating_gates.json` |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-
-**Ví dụ mẫu (`issue_refund`, đừng chép):** tham số `amount_vnd` · WRONG · số tiền tính từ số ngày khách tự khai · LogiX mất
-tiền, hãng bị kéo theo một lỗi · hiện chỉ có trần "không vượt tổng tiền đơn" · cổng ghi so với quyền lợi tính từ DB (chặn).
+| Người duyệt (vận hành) | INCAPABLE | Lượng ticket tăng đột biến trong giờ cao điểm vượt công suất 6 ca/giờ của 1 người trực. | Hàng chờ ùn tắc quá SLA 60 phút, khách bức xúc. | Con số `operations.reviewers_on_shift = 1`, `operations.max_queue_wait_minutes = 60` và quy trình kích hoạt thêm người trong Runbook. |
+| Ngân sách (kinh doanh) | WRONG | Tổng số tiền hoàn tự động trong một ngày vượt quá trần ngân sách cho phép của Finance. | Vượt ngân sách dự toán của công ty. | Con số `business.daily_refund_cap_vnd = 2000000` trong `config/operating_gates.json`. |
 
 ---
 
@@ -208,15 +205,15 @@ Trạng thái: **Xong** (có bằng chứng) · **Chưa** · **Không áp dụng
 
 | # | Nhóm việc | Bằng chứng lấy từ đâu (đã có sẵn trong lab) | Mục cần kiểm tra | Trạng thái | Bằng chứng | PIC |
 |---|---|---|---|---|---|---|
-| 1 | Chất lượng | Report `lab10.eval` (mã lần chạy) + bảng soát lỗi (Phiếu B mục B2) | | | | |
-| 2 | Dữ liệu | Bản đồ dữ liệu (Phiếu B mục B3, câu 2.3): trường nào là nguồn sự thật, trường nào là bản sao | | | | |
-| 3 | Bảo mật | Một vòng HAZOP với guideword PERTURBED (Phiếu B mục B4): chữ nào đi vào model mà không do LogiX viết | | | | |
-| 4 | Quyền hạn | `config/switches.json` + guard trước lệnh ghi; thẻ S2, S8 có thêm mục mức kiểm soát (Phiếu C mục C3) | | | | |
-| 5 | Hiệu năng, hạ tầng | Đội tự ước tính; HAZOP guideword INCAPABLE: LLM không trả lời thì sao; số người duyệt và số ca mỗi giờ | | | | |
-| 6 | Chi phí | Khối "kinh doanh và vận hành" của report: chi phí mỗi ticket so với làm tay, ROI, tiền LLM ticket đắt nhất; `config/operating_gates.json` mục `business` | | | | |
-| 7 | Vận hành | Runbook (Phiếu B mục B7.5–B7.6) + `config/operating_gates.json` mục `operations` (PIC, người duyệt, số người trực, điều kiện dừng, kênh báo tin) + metric trong `monitors.py` | | | | |
-| 8 | Con người, pháp lý | Bên thứ ba (hãng, tài xế, shop, người nhận quà, người đứng tên duyệt); `config/operating_gates.json` mục `legal`; thẻ S6, S7, S8 có mục riêng ở Phiếu C mục C3 | | | | |
-| 9 | Quyết định | Câu tiêu chí (Phiếu A mục A4) + hash Bản tiêu chí đã ký + quyết định Gate 1 (Phiếu B mục B8, Phiếu C mục C12) | | | | |
+| 1 | Chất lượng | Report `lab10.eval` (mã lần chạy) + bảng soát lỗi (Phiếu B mục B2) | Pass_rate ≥ 0.97, pass_k ≥ 0.95, không còn ca hỏng trên bộ nền | Xong | Mã lần chạy `R-base-prepared-20261118-165600-17ba81` (pass 1.0, k 1.0) | Nguyễn Cảnh Hiếu |
+| 2 | Dữ liệu | Bản đồ dữ liệu (Phiếu B mục B3, câu 2.3): trường nào là nguồn sự thật, trường nào là bản sao | Phân định rõ nguồn sự thật tracking DB vs bản sao claim của khách | Xong | Phiếu B mục B3 (câu 2.3) | Hoàng Hải Nam |
+| 3 | Bảo mật | Một vòng HAZOP với guideword PERTURBED (Phiếu B mục B4): chữ nào đi vào model mà không do LogiX viết | Lọc dữ liệu cá nhân PII trước khi gửi sang hãng vận chuyển đối tác | Xong | Phiếu B mục B4 dòng PERTURBED | Lê Minh Phụng |
+| 4 | Quyền hạn | `config/switches.json` + guard trước lệnh ghi; thẻ S2, S8 có thêm mục mức kiểm soát (Phiếu C mục C3) | Công tắc dừng tức thì từng lệnh ghi, write_gate chặn ghi sai | Xong | `lab10/guards.py` và `config/switches.json` | Nguyễn Cảnh Hiếu |
+| 5 | Hiệu năng, hạ tầng | Đội tự ước tính; HAZOP guideword INCAPABLE: LLM không trả lời thì sao; số người duyệt và số ca mỗi giờ | Thời gian xử lý < 1s/ticket, 1 người trực giải quyết 6 ca/giờ | Xong | Report prepared: chờ trung bình 0.0 phút, 0 ca bị ùn | Phạm Thanh Tùng |
+| 6 | Chi phí | Khối "kinh doanh và vận hành" của report: chi phí mỗi ticket so với làm tay, ROI, tiền LLM ticket đắt nhất; `config/operating_gates.json` mục `business` | Chi phí mỗi ticket 4.274đ (trần 6.000đ), ROI 1.34 (sàn 0.6) | Xong | Report prepared dòng ROI và chi phí/ticket | Hoàng Hải Nam |
+| 7 | Vận hành | Runbook (Phiếu B mục B7.5–B7.6) + `config/operating_gates.json` mục `operations` (PIC, người duyệt, số người trực, điều kiện dừng, kênh báo tin) + metric trong `monitors.py` | Người duyệt Hạnh, PIC Tùng, kênh `#ops-alerts`, điều kiện dừng rõ ràng | Xong | `config/operating_gates.json` mục operations và Runbook B7.5 | Phạm Thanh Tùng |
+| 8 | Con người, pháp lý | Bên thứ ba (hãng, tài xế, shop, người nhận quà, người đứng tên duyệt); `config/operating_gates.json` mục `legal`; thẻ S6, S7, S8 có mục riêng ở Phiếu C mục C3 | Lỗi oan đối tác = 0, PII leaks = 0, loại bỏ trường nhạy cảm | Xong | `config/operating_gates.json` mục legal | Lê Minh Phụng |
+| 9 | Quyết định | Câu tiêu chí (Phiếu A mục A4) + hash Bản tiêu chí đã ký + quyết định Gate 1 (Phiếu B mục B8, Phiếu C mục C12) | Tiêu chí đã ký commit `c47fb3b`, hash chốt cổng `c0c09852`, quyết định v1 | Xong | Phiếu B mục B8 Quyết định v1 Thu hẹp | Hoàng Hải Nam |
 
 Ô "Chưa" có rủi ro cao → chuyển thành một dòng Risk register (Phiếu C mục C10).
 

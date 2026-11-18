@@ -61,8 +61,19 @@ def write_gate(ctx, action):
 
     # Cổng 1: Chống ghi lỗi oan cho hãng vận chuyển (bảo vệ đối tác và chị Oanh đối soát)
     if tool == "file_carrier_fault":
+        # Không có nguyên nhân trễ ghi nhận trong tracking -> Chặn ghi lỗi (thẻ S3)
+        if not cause:
+            return Verdict.deny("Tracking chưa ghi nhận nguyên nhân trễ, không được tự ý ghi lỗi hãng.")
+
         if not H.carrier_at_fault(policy, parcel, delay_days):
             return Verdict.deny("Hãng vận chuyển không có lỗi theo tracking DB và chính sách hiệu lực")
+
+        # Hãng nhận từ 2 lỗi trở lên trong cùng ngày -> Chặn ghi lỗi tự động dồn dập (thẻ S3)
+        carrier_id = action.get("carrier_id")
+        today_faults = ctx.tools.fault_rows(carrier_id=carrier_id)
+        if len(today_faults) >= 2:
+            return Verdict.deny(f"Hãng {carrier_id} đã nhận {len(today_faults)} lỗi trong ngày, tạm dừng ghi lỗi tự động chờ người xác nhận.")
+
         if action.get("delay_days") != delay_days:
             return Verdict.modify("Sửa số ngày trễ về đúng dữ liệu tracking DB", delay_days=delay_days)
 
